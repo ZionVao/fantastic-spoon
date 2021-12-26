@@ -1,6 +1,6 @@
-export class Address {
+export interface Address {
   id?: number;
-  country!: string;
-  line_1!: string;
-  line_2!: string;
+  country: string;
+  line_1: string;
+  line_2: string;
 }
