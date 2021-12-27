@@ -1,11 +1,15 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
+import { uiReducer } from 'src/store/ui/slice';
+import { userReduser } from 'src/store/user/slice';
 
 // import { sessionReducer } from 'redux-react-session';
 
 export const store = configureStore({
   reducer: {
     // session: sessionReducer,
+    ui: uiReducer,
+    user: userReduser,
   },
 });
 

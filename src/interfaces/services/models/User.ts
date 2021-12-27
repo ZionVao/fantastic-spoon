@@ -1,6 +1,6 @@
 import { Passport } from './Passport';
 
-export interface LongRegistrator {
+export interface User {
   id?: number;
   fullname: string;
   email: string;
