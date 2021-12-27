@@ -1,6 +1,7 @@
 import { CssBaseline, GlobalStyles } from '@mui/material';
 import React from 'react';
 import { Header } from 'src/components/navigation/Header';
+import RegistryTable from 'src/components/registry/RegistryTable';
 import { useTypedDispatch } from 'src/store';
 
 export const Home = () => {
@@ -18,6 +19,7 @@ export const Home = () => {
       />
       <CssBaseline />
       <Header user={{}} onUserLogout={handleUserLogout} />
+      <RegistryTable />
     </React.Fragment>
   );
 };
