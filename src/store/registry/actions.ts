@@ -1,0 +1,54 @@
+import { Dispatch } from '@reduxjs/toolkit';
+import { RegistryFilter, RegistryHistoryFilter } from 'src/interfaces/Filters';
+import { RegistryService } from 'src/services/registry/RegistryService';
+import { uiActions } from 'src/store/ui/slice';
+import { registryActions } from './slice';
+
+export const fetchRegistryData =
+  (filter: RegistryFilter) => (dispatch: Dispatch) =>
+    RegistryService.getAllRegistry(filter)
+      .then((data) =>
+        dispatch(
+          registryActions.setRegistries({
+            records: data,
+            page: filter.page,
+            count: filter.per_page,
+            totalPages: 1,
+            totalCount: 10,
+          }),
+        ),
+      )
+      .catch(() => {
+        dispatch(
+          uiActions.showNotification({
+            status: 'error',
+            title: 'Error!',
+            message: 'Помилка',
+          }),
+        );
+      });
+
+export const fetchRegistryHistoryData =
+  (filter: RegistryHistoryFilter) => (dispatch: Dispatch) =>
+    RegistryService.getRecordHistory(filter)
+      .then((data) =>
+        dispatch(
+          registryActions.setHistory({
+            docId: filter.doc_id,
+            history: data,
+            page: filter.page,
+            count: filter.per_page,
+            totalCount: 10,
+            totalPages: 1,
+          }),
+        ),
+      )
+      .catch(() => {
+        dispatch(
+          uiActions.showNotification({
+            status: 'error',
+            title: 'Error!',
+            message: 'Помилка',
+          }),
+        );
+      });

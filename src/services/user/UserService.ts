@@ -1,7 +1,6 @@
 // import { Role } from "src/common/enums/app/role.enum";
 import { User } from 'src/interfaces/services/models/User';
 import { UserRole } from 'src/common/enums/app/role.enum';
-import { DocRecord } from 'src/interfaces/services/models/Record';
 import { http } from 'src/services/http/HttpService';
 
 interface getUserArgs {
