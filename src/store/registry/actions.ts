@@ -10,11 +10,11 @@ export const fetchRegistryData =
       .then((data) =>
         dispatch(
           registryActions.setRegistries({
-            records: data,
+            records: data.entities,
             page: filter.page,
             count: filter.per_page,
-            totalPages: 1,
-            totalCount: 10,
+            totalPages: Math.ceil(data.count / filter.per_page),
+            totalCount: data.count,
           }),
         ),
       )
