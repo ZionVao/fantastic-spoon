@@ -35,11 +35,11 @@ export const fetchRegistryHistoryData =
         dispatch(
           registryActions.setHistory({
             docId: filter.doc_id,
-            history: data,
+            history: data.entities,
             page: filter.page,
             count: filter.per_page,
-            totalCount: 10,
-            totalPages: 1,
+            totalCount: data.count,
+            totalPages: Math.ceil(data.count / filter.per_page),
           }),
         ),
       )
