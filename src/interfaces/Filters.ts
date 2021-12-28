@@ -15,3 +15,8 @@ export interface RegistryHistoryFilter {
   page: number;
   per_page: number;
 }
+
+export interface UserFilter {
+  page: number;
+  per_page: number;
+}

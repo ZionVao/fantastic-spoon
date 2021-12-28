@@ -30,33 +30,31 @@ interface updateUserArgs {
 
 export class UserService {
   static async getAllUsers(args: getUserArgs) {
-    let link = '/' + args.role;
-    if (args.created_by) {
-      link += '/' + args.created_by + '/created';
-    }
-    let token = localStorage.getItem('token');
-    if (!token) token = '';
-    return http.get<{ page?: number; per_page?: number }, User[]>(link, {
-      headers: {
-        authorization: token,
+    if (args.role === UserRole.ROOT) throw new Error('Неправильна роль');
+
+    return http.get<{ page?: number; per_page?: number }, User[]>(
+      `/${args.role}${args.created_by && `/${args.created_by}/created`}`,
+      {
+        headers: {
+          authorization: `Bearer ${localStorage.getItem(StorageKey.TOKEN)}`,
+        },
+        params: {
+          page: args.page,
+          per_page: args.per_page,
+        },
       },
-      params: {
-        page: args.page,
-        per_page: args.per_page,
-      },
-    });
+    );
 
     // get /registrator?page=&per_page=
     // get /admin?page=&per_page
   }
 
   static async getUserById(args: getUserByIdArgs) {
-    const link = '/' + args.role + '/' + args.id;
-    let token = localStorage.getItem('token');
-    if (!token) token = '';
-    return http.get<null, User>(link, {
+    if (args.role === UserRole.ROOT) throw new Error('Неправильна роль');
+
+    return http.get<null, User>(`/${args.role}/${args.id}`, {
       headers: {
-        authorization: token,
+        authorization: `Bearer ${localStorage.getItem(StorageKey.TOKEN)}`,
       },
     });
     // get /registrator/:id
@@ -64,42 +62,31 @@ export class UserService {
   }
 
   static async createUser(args: createUserArgs) {
-    let token = localStorage.getItem('token');
-    if (!token) token = '';
+    let req;
 
-    const link = '/' + args.role;
-    if (args.role === UserRole.REGISTRATOR) {
-      const req = {
-        registrator: args.user,
-        pass: args.pass,
-      };
-      return http.post<{ registrator: User; pass: string }, number>(link, req, {
-        headers: {
-          authorization: token,
-        },
-      });
-    } else {
-      const req = {
-        admin: args.user,
-        pass: args.pass,
-      };
-      return http.post<{ admin: User; pass: string }, number>(link, req, {
-        headers: {
-          authorization: token,
-        },
-      });
-    }
+    if (args.role === UserRole.ADMIN)
+      req = { pass: args.pass, [UserRole.ADMIN]: args.user };
+    else if (args.role === UserRole.REGISTRATOR)
+      req = { pass: args.pass, [UserRole.REGISTRATOR]: args.user };
+    else throw new Error('Неправильна роль');
+
+    type r = typeof req;
+    return http.post<r, number>(`/${args.role}`, req, {
+      headers: {
+        authorization: `Bearer ${localStorage.getItem(StorageKey.TOKEN)}`,
+      },
+    });
 
     // post /registrator
     // post /admin
   }
 
   static async updateUser(args: updateUserArgs) {
-    if (args.role !== UserRole.REGISTRATOR) throw new Error('Неправильна роль');
-    return http.put<{ registrator: User; pass?: string }, number>(
+    if (args.role === UserRole.ROOT) throw new Error('Неправильна роль');
+    return http.put<{ record: User; pass?: string }, number>(
       `/${args.role}`,
       {
-        registrator: args.user,
+        record: args.user,
         pass: args.pass,
       },
       {
@@ -112,12 +99,11 @@ export class UserService {
     // put /registrator
     // put /admin
   }
+
   static async login(email: string, pass: string) {
-    const res = await http.post<
+    return http.post<
       { email: string; pass: string },
       { token: string; user: { id: number; role: UserRole } }
     >('/login', { email, pass });
-    console.log(res);
-    return res;
   }
 }

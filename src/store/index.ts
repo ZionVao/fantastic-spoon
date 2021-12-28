@@ -3,6 +3,8 @@ import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import { uiReducer } from 'src/store/ui/slice';
 import { userReduser } from 'src/store/user/slice';
 import { registryReducer } from 'src/store/registry/slice';
+import { registrarReducer } from 'src/store/registrator/slice';
+import { adminReducer } from 'src/store/admin/slice';
 
 // import { sessionReducer } from 'redux-react-session';
 
@@ -12,6 +14,8 @@ export const store = configureStore({
     ui: uiReducer,
     user: userReduser,
     registry: registryReducer,
+    registrar: registrarReducer,
+    admin: adminReducer,
   },
 });
 

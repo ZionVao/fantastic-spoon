@@ -148,7 +148,6 @@ class Http {
     const http = axios.create({
       baseURL: 'https://blooming-earth-65596.herokuapp.com',
       headers,
-      // withCredentials: true,
     });
 
     http.interceptors.request.use(injectToken, (error) =>
