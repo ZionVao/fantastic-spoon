@@ -32,18 +32,18 @@ export class UserService {
   static async getAllUsers(args: getUserArgs) {
     if (args.role === UserRole.ROOT) throw new Error('Неправильна роль');
 
-    return http.get<{ page?: number; per_page?: number }, User[]>(
-      `/${args.role}${args.created_by && `/${args.created_by}/created`}`,
-      {
-        headers: {
-          authorization: `Bearer ${localStorage.getItem(StorageKey.TOKEN)}`,
-        },
-        params: {
-          page: args.page,
-          per_page: args.per_page,
-        },
+    return http.get<
+      { page?: number; per_page?: number },
+      { entities: User[]; count: number }
+    >(`/${args.role}${args.created_by && `/${args.created_by}/created`}`, {
+      headers: {
+        authorization: `Bearer ${localStorage.getItem(StorageKey.TOKEN)}`,
       },
-    );
+      params: {
+        page: args.page,
+        per_page: args.per_page,
+      },
+    });
 
     // get /registrator?page=&per_page=
     // get /admin?page=&per_page

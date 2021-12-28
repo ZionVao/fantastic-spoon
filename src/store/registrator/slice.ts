@@ -24,11 +24,8 @@ const registorSlice = createSlice({
   name: 'registrar',
   initialState,
   reducers: {
-    getRegistors: (state, action: PayloadAction<RegistrarContent>) => {
-      state.registrars = action.payload.registrars;
-      state.page = action.payload.page;
-      state.totalCount = action.payload.totalCount;
-      state.totalPages = Math.ceil(action.payload.totalCount / state.count);
+    serRegistors: (state, action: PayloadAction<RegistrarContent>) => {
+      state = action.payload;
     },
   },
 });

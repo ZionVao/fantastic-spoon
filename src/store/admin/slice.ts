@@ -25,10 +25,7 @@ const adminSlice = createSlice({
   initialState,
   reducers: {
     setAdmins: (state, action: PayloadAction<AdminContent>) => {
-      state.admins = action.payload.admins;
-      state.page = action.payload.page;
-      state.totalCount = action.payload.totalCount;
-      state.totalPages = Math.ceil(action.payload.totalCount / state.count);
+      state = action.payload;
     },
   },
 });
