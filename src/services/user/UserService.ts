@@ -2,6 +2,7 @@
 import { User } from 'src/interfaces/services/models/User';
 import { UserRole } from 'src/common/enums/app/role.enum';
 import { http } from 'src/services/http/HttpService';
+import { StorageKey } from 'src/common/enums/storage-key.enum';
 
 interface getUserArgs {
   role: UserRole;
@@ -94,41 +95,27 @@ export class UserService {
   }
 
   static async updateUser(args: updateUserArgs) {
-    let token = localStorage.getItem('token');
-    if (!token) token = '';
-    const link = '/' + args.role;
-    if (args.role === UserRole.REGISTRATOR) {
-      const req = {
+    if (args.role !== UserRole.REGISTRATOR) throw new Error('Неправильна роль');
+    return http.put<{ registrator: User; pass?: string }, number>(
+      `/${args.role}`,
+      {
         registrator: args.user,
         pass: args.pass,
-      };
-      return http.post<{ registrator: User; pass?: string }, number>(
-        link,
-        req,
-        {
-          headers: {
-            authorization: token,
-          },
-        },
-      );
-    } else {
-      const req = {
-        admin: args.user,
-        pass: args.pass,
-      };
-      return http.post<{ admin: User; pass?: string }, number>(link, req, {
+      },
+      {
         headers: {
-          authorization: token,
+          authorization: `Bearer ${localStorage.getItem(StorageKey.TOKEN)}`,
         },
-      });
-    }
+      },
+    );
+
     // put /registrator
     // put /admin
   }
   static async login(email: string, pass: string) {
     const res = await http.post<
       { email: string; pass: string },
-      { token: string }
+      { token: string; user: { id: number; role: UserRole } }
     >('/login', { email, pass });
     console.log(res);
     return res;
