@@ -69,7 +69,7 @@ export class RegistryService {
 
     return http.post<{ record: DocRecord }, number>(
       '/registry',
-      { record },
+      { record: record },
       {
         headers: {
           authorization: `Bearer ${localStorage.getItem(StorageKey.TOKEN)}`,
