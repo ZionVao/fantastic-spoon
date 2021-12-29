@@ -8,8 +8,13 @@ import {
   Typography,
 } from '@mui/material';
 import React from 'react';
+import { AppRoute } from 'src/common/enums/app-route.enum';
+import { UserRole } from 'src/common/enums/app/role.enum';
 
-export const Header = () => {
+export function Header(params: { role: UserRole | null }) {
+  const exit = () => {
+    localStorage.clear();
+  };
   return (
     <React.Fragment>
       <GlobalStyles
@@ -27,22 +32,27 @@ export const Header = () => {
             {'Спадковий реєстр'}
           </Typography>
           <nav>
-            <Link
-              variant="button"
-              color="text.primary"
-              href="#"
-              sx={{ my: 1, mx: 1.5 }}
-            >
-              Features
-            </Link>
-            <Link
-              variant="button"
-              color="text.primary"
-              href="#"
-              sx={{ my: 1, mx: 1.5 }}
-            >
-              Enterprise
-            </Link>
+            {params.role === UserRole.REGISTRATOR && (
+              <Link
+                variant="button"
+                color="text.primary"
+                href={AppRoute.CREATE}
+                sx={{ my: 1, mx: 1.5 }}
+              >
+                Створити новий документ
+              </Link>
+            )}
+            {params.role === UserRole.ADMIN && (
+              <Link
+                variant="button"
+                color="text.primary"
+                href={AppRoute.CREATE}
+                sx={{ my: 1, mx: 1.5 }}
+              >
+                Створити нового реєстратора
+              </Link>
+            )}
+
             <Link
               variant="button"
               color="text.primary"
@@ -52,11 +62,11 @@ export const Header = () => {
               Support
             </Link>
           </nav>
-          <Button href="#" variant="outlined" sx={{ my: 1, mx: 1.5 }}>
-            Logout
+          <Button onClick={exit} variant="outlined" sx={{ my: 1, mx: 1.5 }}>
+            Вихід
           </Button>
         </Toolbar>
       </AppBar>
     </React.Fragment>
   );
-};
+}

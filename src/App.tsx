@@ -53,7 +53,7 @@ function App() {
   return (
     <Router>
       <>
-        {user.userId !== null && <Header />}
+        {user.userId !== null && <Header role={user.role} />}
         {notice}
 
         <Switch>
@@ -70,9 +70,7 @@ function App() {
             </>
           )}
 
-          <Route exact path={AppRoute.LOGIN}>
-            {user.role === null ? <SignIn /> : <Redirect to={AppRoute.ROOT} />}
-          </Route>
+          <Route exact path={AppRoute.LOGIN} component={SignIn} />
 
           <Route path={AppRoute.ANY} component={NotFound} />
         </Switch>
