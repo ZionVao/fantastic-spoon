@@ -3,21 +3,13 @@ import dayjs from 'dayjs';
 import DateRangePicker, { DateRange } from '@mui/lab/DateRangePicker';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
-import {
-  Grid,
-  Box,
-  Stack,
-  TextField,
-  Button,
-  ToggleButtonGroup,
-  ToggleButton,
-} from '@mui/material';
+import { Grid, Box, Stack, TextField, Button } from '@mui/material';
 import { SearchFields } from './SearchFields';
 import { RegistryFilter } from 'src/interfaces/Filters';
 
 const initialSFields: SearchFields = {
   fullname: '',
-  taxpayer: '',
+  taxpayer_code: '',
 };
 
 const fWidth = 300;
@@ -30,15 +22,6 @@ export default function PaginationSearch(props: {
 
   const [dateValue, setDates] = React.useState<DateRange<Date>>([null, null]);
 
-  const [action, setAction] = React.useState<number | null>(null);
-
-  const handleChangeAction = (
-    event: React.MouseEvent<HTMLElement>,
-    newAction: number,
-  ) => {
-    setAction(newAction);
-  };
-
   const handleSearch = () => {
     const fields: RegistryFilter = {
       date1:
@@ -50,7 +33,8 @@ export default function PaginationSearch(props: {
           ? undefined
           : dayjs(dateValue[1]).format('YYYY-MM-DD'),
       fullname: searchData.fullname === '' ? undefined : searchData.fullname,
-      taxpayer: searchData.taxpayer === '' ? undefined : searchData.taxpayer,
+      taxpayer_code:
+        searchData.taxpayer_code === '' ? undefined : searchData.taxpayer_code,
       page: 0,
       per_page: 0,
     };
@@ -95,11 +79,11 @@ export default function PaginationSearch(props: {
             id="outlined-basic"
             label="Податковий номер"
             variant="outlined"
-            value={searchData.taxpayer}
+            value={searchData.taxpayer_code}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
               setSearchData({
                 ...searchData,
-                taxpayer: event.target.value,
+                taxpayer_code: event.target.value,
               })
             }
             sx={{ width: fWidth }}

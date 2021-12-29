@@ -4,4 +4,5 @@ export enum AppRoute {
   LOGIN = '/login',
   REGISTRATION = '/registration',
   PROFILE = '/profile',
+  CREATE = '/create',
 }

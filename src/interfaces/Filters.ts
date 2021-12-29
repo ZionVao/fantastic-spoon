@@ -4,7 +4,7 @@ export interface RegistryFilter {
   page: number;
   per_page: number;
   type?: RegistryType;
-  taxpayer?: string;
+  taxpayer_code?: string;
   date1?: string;
   date2?: string;
   fullname?: string;

@@ -63,8 +63,10 @@ export class RegistryService {
     );
   }
 
-  static async createRegistry(record: DocRecord, pass: string) {
+  static async createRegistry(record: DocRecord) {
     // post /registry
+    console.log(record);
+
     return http.post<{ record: DocRecord }, number>(
       '/registry',
       { record },
@@ -78,6 +80,7 @@ export class RegistryService {
 
   static async updateRegistry(record: DocRecord) {
     // put /registry
+
     return http.put<{ record: DocRecord }, number>(
       '/registry',
       { record },

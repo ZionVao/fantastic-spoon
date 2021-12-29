@@ -1,4 +1,4 @@
 export interface SearchFields {
-  taxpayer: string;
+  taxpayer_code: string;
   fullname: string;
 }

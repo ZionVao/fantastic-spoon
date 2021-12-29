@@ -1,5 +1,6 @@
 import { Dispatch } from '@reduxjs/toolkit';
 import { RegistryFilter, RegistryHistoryFilter } from 'src/interfaces/Filters';
+import { DocRecord } from 'src/interfaces/services/models/Record';
 import { RegistryService } from 'src/services/registry/RegistryService';
 import { uiActions } from 'src/store/ui/slice';
 import { registryActions } from './slice';
@@ -52,3 +53,26 @@ export const fetchRegistryHistoryData =
           }),
         );
       });
+
+export const createNewRegistry = (record: DocRecord) => (dispatch: Dispatch) =>
+  RegistryService.createRegistry(record)
+    .then((data) =>
+      dispatch(
+        uiActions.showNotification({
+          status: 'success',
+          title: 'Success!',
+          message: 'Документ було додано!',
+        }),
+      ),
+    )
+    .catch((error) => {
+      console.log(error);
+
+      dispatch(
+        uiActions.showNotification({
+          status: 'error',
+          title: 'Error!',
+          message: 'Виникла помилка при додаванні!',
+        }),
+      );
+    });

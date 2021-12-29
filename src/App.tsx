@@ -21,6 +21,7 @@ import { getUser } from './store/user/slice';
 import { Alert, Snackbar } from '@mui/material';
 import { UserRole } from './common/enums/app/role.enum';
 import NotFound from './components/not-found/NotFound';
+import { CreateRegistry } from './components/registry/create/CreateRegistry';
 
 function App() {
   const notification = useTypedSelector(selectNotification);
@@ -59,6 +60,7 @@ function App() {
           {user.role === UserRole.REGISTRATOR && (
             <>
               <Route exact path={AppRoute.ROOT} component={RegistrarHome} />
+              <Route exact path={AppRoute.CREATE} component={CreateRegistry} />
             </>
           )}
 
