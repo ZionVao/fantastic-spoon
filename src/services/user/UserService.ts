@@ -103,7 +103,7 @@ export class UserService {
   static async login(email: string, pass: string) {
     return http.post<
       { email: string; pass: string },
-      { token: string; user: { id: number; role: UserRole } }
+      { token: string; user: { id: number; role: string } }
     >('/login', { email, pass });
   }
 }

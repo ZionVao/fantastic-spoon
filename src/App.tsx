@@ -4,31 +4,75 @@ import './App.css';
 import SignIn from 'src/pages/Login';
 // import { Provider, useDispatch, useSelector } from 'react-redux';
 // test
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import {
+  BrowserRouter as Router,
+  Redirect,
+  Route,
+  Switch,
+} from 'react-router-dom';
 // import { useTypedDispatch } from 'src/store';
 // import { Header } from 'src/components/navigation/Header';
 import { AppRoute } from 'src/common/enums/app-route.enum';
 import { Home } from 'src/pages';
+import { useTypedDispatch, useTypedSelector } from 'src/store';
+import { Header } from 'src/components/navigation/Header';
+import { selectNotification, uiActions } from 'src/store/ui/slice';
+import { getUser } from './store/user/slice';
+import { Alert, Snackbar } from '@mui/material';
+import { UserRole } from './common/enums/app/role.enum';
+import NotFound from './components/not-found/NotFound';
 
 function App() {
-  // const hasUser = false;
+  const notification = useTypedSelector(selectNotification);
 
-  // const dispatch = useTypedDispatch();
+  const user = useTypedSelector(getUser);
 
-  // const handleUserLogout = React.useCallback(
-  //   () => dispatch(() => {}),
-  //   [dispatch],
-  // );
+  const dispatch = useTypedDispatch();
+
+  const handleClose = () => {
+    dispatch(uiActions.clearNotification());
+  };
+
+  const notify = () => {
+    if (notification) {
+      const { status, message } = notification;
+
+      return (
+        <Snackbar open={true} autoHideDuration={6000} onClose={handleClose}>
+          <Alert onClose={handleClose} severity={status} sx={{ width: '100%' }}>
+            {message}
+          </Alert>
+        </Snackbar>
+      );
+    } else return null;
+  };
+
+  const notice = notify();
 
   return (
     <Router>
       <>
-        {/* {hasUser && <Header user={{}} onUserLogout={handleUserLogout} />} */}
+        {user.userId !== null && <Header />}
+        {notice}
 
         <Switch>
-          <Route exact path={AppRoute.ROOT} component={Home} />
+          {user.role === UserRole.REGISTRATOR && (
+            <>
+              <Route exact path={AppRoute.ROOT} component={Home} />
+            </>
+          )}
 
-          <Route path={AppRoute.LOGIN} component={SignIn} />
+          {user.role === UserRole.ADMIN && (
+            <>
+              <Route exact path={AppRoute.ROOT} component={Home} />
+            </>
+          )}
+
+          <Route exact path={AppRoute.LOGIN}>
+            {user.role === null ? <SignIn /> : <Redirect to={AppRoute.ROOT} />}
+          </Route>
+
+          <Route path={AppRoute.ANY} component={NotFound} />
         </Switch>
       </>
     </Router>

@@ -155,7 +155,10 @@ class Http {
     );
 
     http.interceptors.response.use(
-      (response) => response,
+      (response) => {
+        console.log(response);
+        return response.data;
+      },
       (error) => {
         const { response } = error;
         return this.handleError(response);

@@ -1,26 +1,36 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { UserRole } from 'src/common/enums/app/role.enum';
-import { User } from 'src/interfaces/services/models/User';
+import { StorageKey } from 'src/common/enums/storage-key.enum';
 import { RootState } from 'src/store';
 
 interface UserState {
-  user: User | null;
+  userId: number | null;
   role: UserRole | null;
 }
 
 type UserContent = UserState;
 
-const initialState: UserState = {
-  user: null,
+const defaultlState: UserState = {
+  userId: null,
   role: null,
 };
+
+const getState = (): UserState => {
+  const jsonRes = localStorage.getItem(StorageKey.USER);
+  const res = (
+    typeof jsonRes === 'string' ? JSON.parse(jsonRes) : defaultlState
+  ) as UserState;
+  return { ...res };
+};
+
+const initialState: UserState = getState();
 
 const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
     setUser: (state, action: PayloadAction<UserContent>) => {
-      state.user = action.payload.user;
+      state.userId = action.payload.userId;
       state.role = action.payload.role;
     },
   },

@@ -1,4 +1,5 @@
 import { Dispatch } from '@reduxjs/toolkit';
+import { UserRole } from 'src/common/enums/app/role.enum';
 import { StorageKey } from 'src/common/enums/storage-key.enum';
 import { UserService } from 'src/services/user/UserService';
 import { uiActions } from 'src/store/ui/slice';
@@ -9,15 +10,15 @@ export const login =
   async (dispatch: Dispatch) => {
     try {
       const res = await UserService.login(request.email, request.password);
-      console.log(res);
       localStorage.setItem(StorageKey.TOKEN, res.token);
+      localStorage.setItem(StorageKey.USER, JSON.stringify(res.user));
 
-      // const user = await UserService.getUserByToken();
-      // localStorage.setItem(StorageKey.USER, JSON.stringify(user));
-
-      //   dispatch(
-      //     userActions.setUser({ user: user, role: getUserRole(user.id_role) }),
-      //   );
+      dispatch(
+        userActions.setUser({
+          userId: res.user.id,
+          role: (res.user.role as UserRole) || null,
+        }),
+      );
 
       dispatch(
         uiActions.showNotification({
@@ -42,7 +43,7 @@ export const login =
 export const logout = () => (dispatch: Dispatch) => {
   localStorage.removeItem(StorageKey.TOKEN);
   localStorage.removeItem(StorageKey.USER);
-  dispatch(userActions.setUser({ user: null, role: null }));
+  dispatch(userActions.setUser({ userId: null, role: null }));
   dispatch(
     uiActions.showNotification({
       status: 'info',
