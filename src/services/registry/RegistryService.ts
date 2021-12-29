@@ -9,17 +9,20 @@ export class RegistryService {
     filter: RegistryFilter,
   ): Promise<{ entities: DocRecord[]; count: number }> {
     // get /registry?page=&per_page=&type=&taxpayer=&date1=&date2=&fullname=
-    return http.get<RegistryFilter, { entities: DocRecord[]; count: number }>(
-      '/registry',
-      {
-        headers: {
-          authorization: `Bearer ${localStorage.getItem(StorageKey.TOKEN)}`,
-        },
-        params: {
-          ...filter,
-        },
+    const res = await http.get<
+      RegistryFilter,
+      { entities: any[]; count: number }
+    >('/registry', {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem(StorageKey.TOKEN)}`,
+        'Content-Type': 'multipart/form-data; charset=utf-8',
       },
-    );
+      params: {
+        ...filter,
+      },
+    });
+    console.log(res);
+    return res;
   }
 
   static async getRegistryById(id: number, date?: Date): Promise<DocRecord> {
@@ -27,6 +30,7 @@ export class RegistryService {
     return http.get<{ date: string }, DocRecord>(`/registry/${id}`, {
       headers: {
         authorization: `Bearer ${localStorage.getItem(StorageKey.TOKEN)}`,
+        'Content-Type': 'multipart/form-data; charset=utf-8',
       },
       params: {
         page: date?.toISOString(),
@@ -49,6 +53,7 @@ export class RegistryService {
       {
         headers: {
           authorization: `Bearer ${localStorage.getItem(StorageKey.TOKEN)}`,
+          'Content-Type': 'multipart/form-data; charset=utf-8',
         },
         params: {
           page: filter.page,
@@ -94,6 +99,7 @@ export class RegistryService {
       {
         headers: {
           authorization: `Bearer ${localStorage.getItem(StorageKey.TOKEN)}`,
+          'Content-Type': 'multipart/form-data; charset=utf-8',
         },
         params: {
           ...filter,

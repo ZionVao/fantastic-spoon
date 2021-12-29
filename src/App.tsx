@@ -13,7 +13,7 @@ import {
 // import { useTypedDispatch } from 'src/store';
 // import { Header } from 'src/components/navigation/Header';
 import { AppRoute } from 'src/common/enums/app-route.enum';
-import { Home } from 'src/pages';
+import { AdminHome, RegistrarHome } from 'src/pages';
 import { useTypedDispatch, useTypedSelector } from 'src/store';
 import { Header } from 'src/components/navigation/Header';
 import { selectNotification, uiActions } from 'src/store/ui/slice';
@@ -58,13 +58,13 @@ function App() {
         <Switch>
           {user.role === UserRole.REGISTRATOR && (
             <>
-              <Route exact path={AppRoute.ROOT} component={Home} />
+              <Route exact path={AppRoute.ROOT} component={RegistrarHome} />
             </>
           )}
 
           {user.role === UserRole.ADMIN && (
             <>
-              <Route exact path={AppRoute.ROOT} component={Home} />
+              <Route exact path={AppRoute.ROOT} component={AdminHome} />
             </>
           )}
 

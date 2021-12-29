@@ -1,4 +1,5 @@
 import * as React from 'react';
+import dayjs from 'dayjs';
 import DateRangePicker, { DateRange } from '@mui/lab/DateRangePicker';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
@@ -12,18 +13,17 @@ import {
   ToggleButton,
 } from '@mui/material';
 import { SearchFields } from './SearchFields';
-import { CheckFields } from './CheckFields';
+import { RegistryFilter } from 'src/interfaces/Filters';
 
 const initialSFields: SearchFields = {
-  full_name: '',
-  email: '',
-  code: '',
+  fullname: '',
+  taxpayer: '',
 };
 
 const fWidth = 300;
 
 export default function PaginationSearch(props: {
-  onSearch: (searchData: SearchFields, check: CheckFields) => void;
+  onSearch: (searchData: RegistryFilter) => void;
 }) {
   const [searchData, setSearchData] =
     React.useState<SearchFields>(initialSFields);
@@ -40,14 +40,22 @@ export default function PaginationSearch(props: {
   };
 
   const handleSearch = () => {
-    const fields: CheckFields = {
-      date1: dateValue[0] === null ? null : dateValue[0].toString(),
-      date2: dateValue[1] === null ? null : dateValue[1].toString(),
-      id_typeAction: action === null ? null : action,
+    const fields: RegistryFilter = {
+      date1:
+        dateValue[0] === null
+          ? undefined
+          : dayjs(dateValue[0]).format('YYYY-MM-DD'),
+      date2:
+        dateValue[1] === null
+          ? undefined
+          : dayjs(dateValue[1]).format('YYYY-MM-DD'),
+      fullname: searchData.fullname === '' ? undefined : searchData.fullname,
+      taxpayer: searchData.taxpayer === '' ? undefined : searchData.taxpayer,
+      page: 0,
+      per_page: 0,
     };
-    console.log(searchData);
 
-    props.onSearch(searchData, fields);
+    props.onSearch(fields);
   };
   return (
     <Box
@@ -74,52 +82,25 @@ export default function PaginationSearch(props: {
             id="outlined-basic"
             label="ПІБ"
             variant="outlined"
-            value={searchData.full_name}
+            value={searchData.fullname}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-              console.log(event.target.value, 'ertyui');
-
               setSearchData({
                 ...searchData,
-                full_name: event.target.value,
+                fullname: event.target.value,
               });
             }}
-            onBlur={(event: React.FocusEvent<HTMLInputElement>) =>
-              setSearchData({
-                ...searchData,
-                full_name: searchData.full_name.trim(),
-              })
-            }
             sx={{ width: fWidth }}
           />
           <TextField
             id="outlined-basic"
-            label="Електронна пошта"
+            label="Податковий номер"
             variant="outlined"
-            value={searchData.email}
+            value={searchData.taxpayer}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
               setSearchData({
                 ...searchData,
-                email: event.target.value,
+                taxpayer: event.target.value,
               })
-            }
-            onBlur={(event: React.FocusEvent<HTMLInputElement>) =>
-              setSearchData({ ...searchData, email: searchData.email.trim() })
-            }
-            sx={{ width: fWidth }}
-          />
-          <TextField
-            id="outlined-basic"
-            label="Реєстраційний код"
-            variant="outlined"
-            value={searchData.code}
-            onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-              setSearchData({
-                ...searchData,
-                code: event.target.value,
-              })
-            }
-            onBlur={(event: React.FocusEvent<HTMLInputElement>) =>
-              setSearchData({ ...searchData, code: searchData.code.trim() })
             }
             sx={{ width: fWidth }}
           />
@@ -148,15 +129,6 @@ export default function PaginationSearch(props: {
               )}
             />
           </LocalizationProvider>
-          <ToggleButtonGroup
-            color="primary"
-            value={action}
-            exclusive
-            onChange={handleChangeAction}
-          >
-            <ToggleButton value={1}>Створення</ToggleButton>
-            <ToggleButton value={2}>Зміна</ToggleButton>
-          </ToggleButtonGroup>
         </Stack>
       </Grid>
       <Box textAlign="center" sx={{ p: 2 }}>

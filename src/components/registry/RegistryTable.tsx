@@ -1,112 +1,88 @@
 import * as React from 'react';
 import {
+  Pagination,
   Paper,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
-  TablePagination,
   TableRow,
 } from '@mui/material';
+import dayjs from 'dayjs';
 import PaginationSearch from './PaginationSearchRegistry';
-import { CheckFields } from './CheckFields';
-import { SearchFields } from './SearchFields';
-import { useTypedDispatch } from 'src/store';
+import { useTypedDispatch, useTypedSelector } from 'src/store';
+import { RegistryFilter } from 'src/interfaces/Filters';
+import { fetchRegistryData } from 'src/store/registry/actions';
+import { loadRegistry } from 'src/store/registry/slice';
+import { DocType } from 'src/common/enums/app/doc-type.enum';
+import { DocRecord } from 'src/interfaces/services/models/Record';
 
 interface Column {
-  id: 'name' | 'code' | 'population' | 'size' | 'density';
+  id: 'number' | 'name' | 'code' | 'date' | 'type';
   label: string;
   minWidth?: number;
   align?: 'right';
-  format?: (value: number) => string;
+  format?: (value: any) => any;
 }
 
 const columns: Column[] = [
-  { id: 'name', label: 'Name', minWidth: 170 },
-  { id: 'code', label: 'ISO\u00a0Code', minWidth: 100 },
+  { id: 'number', label: '#', format: (value: number) => value.toString() },
+  { id: 'name', label: 'ФІО Заповідача', minWidth: 170 },
+  { id: 'code', label: 'Ідентифікаційний код', minWidth: 170 },
   {
-    id: 'population',
-    label: 'Population',
+    id: 'date',
+    label: 'День народження',
     minWidth: 170,
     align: 'right',
-    format: (value: number) => value.toLocaleString('en-US'),
+    format: (value: string) => dayjs(value).format('YYYY-MM-DD'),
   },
   {
-    id: 'size',
-    label: 'Size\u00a0(km\u00b2)',
+    id: 'type',
+    label: 'Вид відомості',
     minWidth: 170,
     align: 'right',
-    format: (value: number) => value.toLocaleString('en-US'),
-  },
-  {
-    id: 'density',
-    label: 'Density',
-    minWidth: 170,
-    align: 'right',
-    format: (value: number) => value.toFixed(2),
+    format: (value: number) => Object.values(DocType)[value] || DocType.WILL,
   },
 ];
 
 interface Data {
+  number: number;
   name: string;
   code: string;
-  population: number;
-  size: number;
-  density: number;
+  date: string;
+  type: number;
 }
 
-function createData(
-  name: string,
-  code: string,
-  population: number,
-  size: number,
-): Data {
-  const density = population / size;
-  return { name, code, population, size, density };
+function createData(registry: DocRecord[]): Data[] {
+  return registry.map((r, indx) => ({
+    number: indx + 1,
+    name: r.person.fullname,
+    code: r.person.taxpayer_code,
+    date: r.person.date_of_birth,
+    type: r.type,
+  }));
 }
-
-const rows = [
-  createData('India', 'IN', 1324171354, 3287263),
-  createData('China', 'CN', 1403500365, 9596961),
-  createData('Italy', 'IT', 60483973, 301340),
-  createData('United States', 'US', 327167434, 9833520),
-  createData('Canada', 'CA', 37602103, 9984670),
-  createData('Australia', 'AU', 25475400, 7692024),
-  createData('Germany', 'DE', 83019200, 357578),
-  createData('Ireland', 'IE', 4857000, 70273),
-  createData('Mexico', 'MX', 126577691, 1972550),
-  createData('Japan', 'JP', 126317000, 377973),
-  createData('France', 'FR', 67022000, 640679),
-  createData('United Kingdom', 'GB', 67545757, 242495),
-  createData('Russia', 'RU', 146793744, 17098246),
-  createData('Nigeria', 'NG', 200962417, 923768),
-  createData('Brazil', 'BR', 210147125, 8515767),
-];
 
 export default function RegistryTable() {
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
+  const [page, setPage] = React.useState(1);
+  const rowsPerPage = 10;
 
   const dispatch = useTypedDispatch();
+  const registry = useTypedSelector(loadRegistry);
+  console.log(registry);
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
   };
 
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    setRowsPerPage(+event.target.value);
-    setPage(0);
-  };
-
   const handleSearch = React.useCallback(
-    (searchData: SearchFields, fields: CheckFields) => {
-      // dispatch();
+    (searchData: RegistryFilter) => {
+      dispatch(
+        fetchRegistryData({ ...searchData, page, per_page: rowsPerPage }),
+      );
     },
-
-    [dispatch],
+    [dispatch, page],
   );
 
   return (
@@ -116,19 +92,11 @@ export default function RegistryTable() {
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
             <TableRow>
-              <TableCell align="center" colSpan={2}>
-                Country
-              </TableCell>
-              <TableCell align="center" colSpan={3}>
-                Details
-              </TableCell>
-            </TableRow>
-            <TableRow>
               {columns.map((column) => (
                 <TableCell
                   key={column.id}
                   align={column.align}
-                  style={{ top: 57, minWidth: column.minWidth }}
+                  style={{ minWidth: column.minWidth }}
                 >
                   {column.label}
                 </TableCell>
@@ -136,35 +104,30 @@ export default function RegistryTable() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((row) => {
-                return (
-                  <TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
-                    {columns.map((column) => {
-                      const value = row[column.id];
-                      return (
-                        <TableCell key={column.id} align={column.align}>
-                          {column.format && typeof value === 'number'
-                            ? column.format(value)
-                            : value}
-                        </TableCell>
-                      );
-                    })}
-                  </TableRow>
-                );
-              })}
+            {(createData(registry.doc.records) || []).map((row) => {
+              return (
+                <TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
+                  {columns.map((column) => {
+                    const value = row[column.id];
+                    return (
+                      <TableCell key={column.id} align={column.align}>
+                        {column.format ? column.format(value) : value}
+                      </TableCell>
+                    );
+                  })}
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
       </TableContainer>
-      <TablePagination
-        rowsPerPageOptions={[10, 25, 100]}
-        component="div"
-        count={rows.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
+      <Pagination
+        page={registry.doc.page}
+        count={registry.doc.totalPages}
+        onChange={handleChangePage}
+        variant="outlined"
+        shape="rounded"
+        size="small"
       />
     </Paper>
   );

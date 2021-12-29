@@ -2,7 +2,7 @@ import { CssBaseline, GlobalStyles } from '@mui/material';
 import React from 'react';
 import RegistryTable from 'src/components/registry/RegistryTable';
 
-export const Home = () => {
+export const AdminHome = () => {
   return (
     <React.Fragment>
       <GlobalStyles

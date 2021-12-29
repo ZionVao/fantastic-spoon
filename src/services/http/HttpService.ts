@@ -117,7 +117,7 @@ enum StatusCode {
 }
 
 const headers: Readonly<Record<string, string>> = {
-  Accept: 'application/json',
+  Accept: '*/*',
   'Content-Type': 'application/json; charset=utf-8',
   // 'Access-Control-Allow-Credentials': true,
   // 'X-Requested-With': 'XMLHttpRequest',
@@ -127,7 +127,7 @@ const injectToken = (config: AxiosRequestConfig): AxiosRequestConfig => {
   try {
     const token = localStorage.getItem(StorageKey.TOKEN);
 
-    if (token != null && config.headers) {
+    if (token !== null && config.headers) {
       config.headers.Authorization = `Bearer ${token}`;
       config.headers = { ...config.headers };
     }
@@ -150,8 +150,12 @@ class Http {
       headers,
     });
 
-    http.interceptors.request.use(injectToken, (error) =>
-      Promise.reject(error),
+    http.interceptors.request.use(
+      (request) => {
+        console.log(request);
+        return request;
+      },
+      (error) => Promise.reject(error),
     );
 
     http.interceptors.response.use(

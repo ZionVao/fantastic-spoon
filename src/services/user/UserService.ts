@@ -38,6 +38,7 @@ export class UserService {
     >(`/${args.role}${args.created_by && `/${args.created_by}/created`}`, {
       headers: {
         authorization: `Bearer ${localStorage.getItem(StorageKey.TOKEN)}`,
+        'Content-Type': 'multipart/form-data; charset=utf-8',
       },
       params: {
         page: args.page,
@@ -55,6 +56,7 @@ export class UserService {
     return http.get<null, User>(`/${args.role}/${args.id}`, {
       headers: {
         authorization: `Bearer ${localStorage.getItem(StorageKey.TOKEN)}`,
+        'Content-Type': 'multipart/form-data; charset=utf-8',
       },
     });
     // get /registrator/:id
