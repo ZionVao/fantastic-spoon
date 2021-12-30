@@ -1,5 +1,9 @@
 import * as React from 'react';
 import {
+  Box,
+  Button,
+  Collapse,
+  IconButton,
   Pagination,
   Paper,
   Table,
@@ -8,7 +12,11 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  Typography,
 } from '@mui/material';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+
 import dayjs from 'dayjs';
 import PaginationSearch from './PaginationSearchRegistry';
 import { useTypedDispatch, useTypedSelector } from 'src/store';
@@ -17,9 +25,10 @@ import { fetchRegistryData } from 'src/store/registry/actions';
 import { loadRegistry } from 'src/store/registry/slice';
 import { DocType } from 'src/common/enums/app/doc-type.enum';
 import { DocRecord } from 'src/interfaces/services/models/Record';
+import { AppRoute } from 'src/common/enums/app-route.enum';
 
 interface Column {
-  id: 'number' | 'name' | 'code' | 'date' | 'type';
+  id: 'name' | 'code' | 'date' | 'type';
   label: string;
   minWidth?: number;
   align?: 'right';
@@ -27,7 +36,6 @@ interface Column {
 }
 
 const columns: Column[] = [
-  { id: 'number', label: '#', format: (value: number) => value.toString() },
   { id: 'name', label: 'ФІО Заповідача', minWidth: 170 },
   { id: 'code', label: 'Ідентифікаційний код', minWidth: 170 },
   {
@@ -47,21 +55,98 @@ const columns: Column[] = [
 ];
 
 interface Data {
-  number: number;
   name: string;
   code: string;
   date: string;
   type: number;
 }
 
-function createData(registry: DocRecord[]): Data[] {
-  return registry.map((r, indx) => ({
-    number: indx + 1,
-    name: r.person.fullname,
-    code: r.person.taxpayer_code,
-    date: r.person.date_of_birth,
-    type: r.type,
-  }));
+function createData(registry: DocRecord): Data {
+  return {
+    name: registry.person.fullname,
+    code: registry.person.taxpayer_code,
+    date: registry.person.date_of_birth,
+    type: registry.type,
+  };
+}
+
+function Row(props: { row: DocRecord }) {
+  const { row } = props;
+  const [open, setOpen] = React.useState(false);
+
+  const rowData = createData(row);
+
+  return (
+    <React.Fragment>
+      <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
+        <TableCell>
+          <IconButton
+            aria-label="expand row"
+            size="small"
+            onClick={() => setOpen(!open)}
+          >
+            {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+          </IconButton>
+        </TableCell>
+
+        {columns.map((column) => {
+          const value = rowData[column.id];
+          return (
+            <TableCell key={column.id} align={column.align}>
+              {column.format ? column.format(value) : value}
+            </TableCell>
+          );
+        })}
+      </TableRow>
+      <TableRow>
+        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+          <Collapse in={open} timeout="auto" unmountOnExit>
+            <Box sx={{ margin: 1 }}>
+              <Typography variant="h6" gutterBottom component="div">
+                Деталі відомості про документ
+              </Typography>
+              <Table size="small" aria-label="purchases">
+                {/* <TableHead>
+                 
+                </TableHead> */}
+                <TableBody>
+                  <TableRow>
+                    <TableCell>Номер бланку</TableCell>
+                    <TableCell align="right">
+                      {row.blanks_numbers.toString()}
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>Дата реєстрації</TableCell>
+                    <TableCell align="right">
+                      {dayjs(row.sertificating_date).format('YYYY-MM-DD')}
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>Місце реєстрації документа</TableCell>
+                    <TableCell align="right">
+                      {`${row.sertificating_place.line_1}, ${row.sertificating_place.line_2}, ${row.sertificating_place.country}`}
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>
+                      <Button
+                        href={`/registry/${row.id}`}
+                        variant="outlined"
+                        sx={{ my: 1, mx: 1.5 }}
+                      >
+                        Внести зміни
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </Box>
+          </Collapse>
+        </TableCell>
+      </TableRow>
+    </React.Fragment>
+  );
 }
 
 export default function RegistryTable() {
@@ -92,6 +177,7 @@ export default function RegistryTable() {
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
             <TableRow>
+              <TableCell></TableCell>
               {columns.map((column) => (
                 <TableCell
                   key={column.id}
@@ -104,20 +190,13 @@ export default function RegistryTable() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {(createData(registry.doc.records) || []).map((row) => {
-              return (
-                <TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
-                  {columns.map((column) => {
-                    const value = row[column.id];
-                    return (
-                      <TableCell key={column.id} align={column.align}>
-                        {column.format ? column.format(value) : value}
-                      </TableCell>
-                    );
-                  })}
-                </TableRow>
-              );
-            })}
+            {registry.doc.records.map((row) => (
+              <Row key={row.id} row={row} />
+            ))}
+
+            {registry.doc.records.map((row) => (
+              <Row row={row} />
+            ))}
           </TableBody>
         </Table>
       </TableContainer>

@@ -60,6 +60,11 @@ function App() {
           {user.role === UserRole.REGISTRATOR && (
             <>
               <Route exact path={AppRoute.ROOT} component={RegistrarHome} />
+              <Route
+                exact
+                path={AppRoute.UPDATE_REGISTRY}
+                component={CreateRegistry}
+              />
               <Route exact path={AppRoute.CREATE} component={CreateRegistry} />
             </>
           )}
