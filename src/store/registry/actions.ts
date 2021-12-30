@@ -76,3 +76,44 @@ export const createNewRegistry = (record: DocRecord) => (dispatch: Dispatch) =>
         }),
       );
     });
+
+export const updateRegistry = (record: DocRecord) => (dispatch: Dispatch) =>
+  RegistryService.updateRegistry(record)
+    .then((data) =>
+      dispatch(
+        uiActions.showNotification({
+          status: 'success',
+          title: 'Success!',
+          message: 'Документ було змінено!',
+        }),
+      ),
+    )
+    .catch((error) => {
+      console.log(error);
+
+      dispatch(
+        uiActions.showNotification({
+          status: 'error',
+          title: 'Error!',
+          message: 'Виникла помилка при внесені змін!',
+        }),
+      );
+    });
+
+export const getRegistryById =
+  (id: number) =>
+  async (dispatch: Dispatch): Promise<DocRecord | undefined> => {
+    try {
+      const res = await RegistryService.getRegistryById(id);
+      return res;
+    } catch (error) {
+      console.log(error);
+      dispatch(
+        uiActions.showNotification({
+          status: 'error',
+          title: 'Error!',
+          message: 'Помилка читання запису!',
+        }),
+      );
+    }
+  };

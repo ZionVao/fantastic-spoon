@@ -22,6 +22,7 @@ import { Alert, Snackbar } from '@mui/material';
 import { UserRole } from './common/enums/app/role.enum';
 import NotFound from './components/not-found/NotFound';
 import { CreateRegistry } from './components/registry/create/CreateRegistry';
+import { UpdateRegistry } from './components/registry/create/update/UpdateForm';
 
 function App() {
   const notification = useTypedSelector(selectNotification);
@@ -63,7 +64,9 @@ function App() {
               <Route
                 exact
                 path={AppRoute.UPDATE_REGISTRY}
-                component={CreateRegistry}
+                render={({ match }) => (
+                  <UpdateRegistry id={Number(match.params.id)} />
+                )}
               />
               <Route exact path={AppRoute.CREATE} component={CreateRegistry} />
             </>

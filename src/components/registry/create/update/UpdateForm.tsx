@@ -9,13 +9,15 @@ import StepLabel from '@mui/material/StepLabel';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import PersonForm from './PersonForm';
-import DocForm from './DocForm';
-import Review from './Review';
-import { DocData, PersonData } from './Data';
+import PersonForm from '../PersonForm';
+import DocForm from '../DocForm';
+import Review from '../Review';
+import { DocData, PersonData } from '../Data';
 import { StorageKey } from 'src/common/enums/storage-key.enum';
 import { useTypedDispatch } from 'src/store';
-import { createNewRegistry } from 'src/store/registry/actions';
+import { getRegistryById, updateRegistry } from 'src/store/registry/actions';
+import { DocRecord } from 'src/interfaces/services/models/Record';
+import { Person } from 'src/interfaces/services/models/Person';
 
 const steps = [
   'Відомості про Заповідача / Відчужувача',
@@ -25,7 +27,7 @@ const steps = [
 
 const theme = createTheme();
 
-const initialPesonState: PersonData = {
+const initialPesonState: Person = {
   taxpayer_code: '',
   fullname: '',
   place_of_living: {
@@ -40,8 +42,9 @@ const initialPesonState: PersonData = {
   },
   date_of_birth: '',
 };
-
-const initialDocState: DocData = {
+type DocumentData = DocData & { id: number };
+const initialDocState: DocumentData = {
+  id: 0,
   type: 0,
   blanks_numbers: 0,
   notarial_action_id: 1,
@@ -55,13 +58,26 @@ const initialDocState: DocData = {
   },
 };
 
-export function CreateRegistry() {
+export function UpdateRegistry(props: { id: number }) {
   const dispatch = useTypedDispatch();
 
   const [activeStep, setActiveStep] = React.useState(0);
 
   const [person, setPersonData] = React.useState<PersonData>(initialPesonState);
   const [doc, setDocData] = React.useState<DocData>(initialDocState);
+
+  React.useEffect(() => {
+    async function fetchData() {
+      const res = await dispatch(getRegistryById(props.id));
+      console.log(res, 'dispatch');
+
+      if (res) {
+        setPersonData({ ...res.person });
+        setDocData({ ...res });
+      }
+    }
+    fetchData();
+  }, [dispatch, props.id]);
 
   const handleNext = () => {
     setActiveStep(activeStep + 1);
@@ -81,10 +97,10 @@ export function CreateRegistry() {
     [],
   );
 
-  const handleCreation = React.useCallback(
+  const handleUpdate = React.useCallback(
     () =>
       dispatch(
-        createNewRegistry({
+        updateRegistry({
           ...doc,
           sertificating_place: { ...doc.sertificating_place },
           person: { ...person },
@@ -116,7 +132,7 @@ export function CreateRegistry() {
           sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}
         >
           <Typography component="h1" variant="h4" align="center">
-            Додавання документа
+            Редагування документа
           </Typography>
           <Stepper activeStep={activeStep} sx={{ pt: 3, pb: 5 }}>
             {steps.map((label) => (
@@ -132,11 +148,11 @@ export function CreateRegistry() {
                   Інформацію буде відправлено на оброку
                 </Typography>
                 <Typography variant="subtitle1">
-                  Очікуйте сповіщення про статус виконання операції внесення
-                  нових відомостей про документ.
+                  Очікуйте сповіщення про статус виконання операції редагування
+                  відомостей про документ.
                 </Typography>
-                <Button variant="outlined" onClick={handleCreation}>
-                  Створити
+                <Button variant="outlined" onClick={handleUpdate}>
+                  Редагувати
                 </Button>
               </React.Fragment>
             ) : (
@@ -154,7 +170,7 @@ export function CreateRegistry() {
                     sx={{ mt: 3, ml: 1 }}
                   >
                     {activeStep === steps.length - 1
-                      ? 'Створити документ'
+                      ? 'Редагувати документ'
                       : 'Далі'}
                   </Button>
                 </Box>
