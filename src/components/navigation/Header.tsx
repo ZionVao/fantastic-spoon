@@ -10,11 +10,24 @@ import {
 import React from 'react';
 import { AppRoute } from 'src/common/enums/app-route.enum';
 import { UserRole } from 'src/common/enums/app/role.enum';
+import { Redirect, useHistory } from 'react-router-dom';
 
-export function Header(params: { role: UserRole | null }) {
+export function Header(params: {
+  role: UserRole | null;
+  onLogout: () => void;
+}) {
+  const history = useHistory();
+
   const exit = () => {
     localStorage.clear();
+    history.replace(AppRoute.LOGIN);
+    params.onLogout();
   };
+
+  // React.useEffect(() => {
+  //   if (localStorage.length === 0) history.replace(AppRoute.ROOT);
+  // });
+
   return (
     <React.Fragment>
       <GlobalStyles

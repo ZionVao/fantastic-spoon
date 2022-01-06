@@ -23,6 +23,7 @@ import { UserRole } from './common/enums/app/role.enum';
 import NotFound from './components/not-found/NotFound';
 import { CreateRegistry } from './components/registry/create/CreateRegistry';
 import { UpdateRegistry } from './components/registry/create/update/UpdateForm';
+import { logout } from './store/user/actions';
 
 function App() {
   const notification = useTypedSelector(selectNotification);
@@ -34,6 +35,11 @@ function App() {
   const handleClose = () => {
     dispatch(uiActions.clearNotification());
   };
+
+  const handleUserLogout = React.useCallback(
+    () => dispatch(logout()),
+    [dispatch],
+  );
 
   const notify = () => {
     if (notification) {
@@ -54,7 +60,9 @@ function App() {
   return (
     <Router>
       <>
-        {user.userId !== null && <Header role={user.role} />}
+        {user.userId !== null && (
+          <Header role={user.role} onLogout={handleUserLogout} />
+        )}
         {notice}
 
         <Switch>
@@ -79,6 +87,10 @@ function App() {
           )}
 
           <Route exact path={AppRoute.LOGIN} component={SignIn} />
+
+          {user.role === null && (
+            <Redirect exact from={AppRoute.ROOT} to={AppRoute.LOGIN} />
+          )}
 
           <Route path={AppRoute.ANY} component={NotFound} />
         </Switch>

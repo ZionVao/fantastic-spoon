@@ -36,11 +36,11 @@ interface Column {
 }
 
 const columns: Column[] = [
-  { id: 'name', label: 'ФІО Заповідача', minWidth: 170 },
+  { id: 'name', label: 'ПІБ Заповідача', minWidth: 170 },
   { id: 'code', label: 'Ідентифікаційний код', minWidth: 170 },
   {
     id: 'date',
-    label: 'День народження',
+    label: 'Дата народження',
     minWidth: 170,
     align: 'right',
     format: (value: string) => dayjs(value).format('YYYY-MM-DD'),
@@ -192,10 +192,6 @@ export default function RegistryTable() {
           <TableBody>
             {registry.doc.records.map((row) => (
               <Row key={row.id} row={row} />
-            ))}
-
-            {registry.doc.records.map((row) => (
-              <Row row={row} />
             ))}
           </TableBody>
         </Table>

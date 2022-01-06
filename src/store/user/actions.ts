@@ -41,8 +41,7 @@ export const login =
   };
 
 export const logout = () => (dispatch: Dispatch) => {
-  localStorage.removeItem(StorageKey.TOKEN);
-  localStorage.removeItem(StorageKey.USER);
+  localStorage.clear();
   dispatch(userActions.setUser({ userId: null, role: null }));
   dispatch(
     uiActions.showNotification({

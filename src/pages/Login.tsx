@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useHistory } from 'react-router-dom';
 import {
   Avatar,
   Button,
@@ -14,21 +15,27 @@ import {
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { useTypedDispatch } from 'src/store';
 import { login } from 'src/store/user/actions';
+import { AppRoute } from 'src/common/enums/app-route.enum';
+import { StorageKey } from 'src/common/enums/storage-key.enum';
 
 export default function SignIn() {
+  const history = useHistory();
+
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
 
   const dispatch = useTypedDispatch();
 
   const handleLogin = React.useCallback(
-    (payload: { email: string; password: string }) => dispatch(login(payload)),
-    [dispatch],
+    async (payload: { email: string; password: string }) => {
+      await dispatch(login(payload));
+      if (localStorage.getItem(StorageKey.USER) !== null)
+        history.replace(AppRoute.ROOT);
+    },
+    [dispatch, history],
   );
 
   const handleClick = () => {
-    console.log('dfrgfhj');
-
     handleLogin({ email, password });
   };
 
