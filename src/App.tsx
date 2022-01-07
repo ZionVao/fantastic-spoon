@@ -24,6 +24,7 @@ import NotFound from './components/not-found/NotFound';
 import { CreateRegistry } from './components/registry/create/CreateRegistry';
 import { UpdateRegistry } from './components/registry/create/update/UpdateForm';
 import { logout } from './store/user/actions';
+import { CreateRegistrar } from './components/registrar/create/CreateRegistrar';
 
 function App() {
   const notification = useTypedSelector(selectNotification);
@@ -83,6 +84,7 @@ function App() {
           {user.role === UserRole.ADMIN && (
             <>
               <Route exact path={AppRoute.ROOT} component={AdminHome} />
+              <Route exact path={AppRoute.CREATE} component={CreateRegistrar} />
             </>
           )}
 

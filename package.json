@@ -58,6 +58,7 @@
     "@mui/lab": "^5.0.0-alpha.61",
     "@mui/material": "^5.2.6",
     "@reduxjs/toolkit": "^1.7.1",
-    "tsconfig-paths-webpack-plugin": "^3.5.2"
+    "tsconfig-paths-webpack-plugin": "^3.5.2",
+    "yup": "^0.32.11"
   }
 }

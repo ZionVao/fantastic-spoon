@@ -35,7 +35,7 @@ export default function PersonForm(params: {
             required
             id="date"
             name="date"
-            label="День народження"
+            label="Дата народження"
             value={params.personData.date_of_birth}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
               params.onChange({
