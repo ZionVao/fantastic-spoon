@@ -11,7 +11,7 @@ export const fetchRegistrarsData =
     UserService.getAllUsers({ role: UserRole.REGISTRATOR, ...filter })
       .then((data) =>
         dispatch(
-          registrarActions.serRegistors({
+          registrarActions.setRegistors({
             registrars: data.entities,
             page: filter.page,
             count: filter.per_page,

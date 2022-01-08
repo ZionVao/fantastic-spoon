@@ -24,14 +24,19 @@ const registorSlice = createSlice({
   name: 'registrar',
   initialState,
   reducers: {
-    serRegistors: (state, action: PayloadAction<RegistrarContent>) => {
-      state = action.payload;
+    setRegistors: (state, action: PayloadAction<RegistrarContent>) => {
+      state.registrars = action.payload.registrars;
+      state.page = action.payload.page;
+      state.count = action.payload.count;
+      state.totalPages = action.payload.totalPages;
+      state.totalCount = action.payload.totalCount;
+      console.log('qwerty', state);
     },
   },
 });
 
-export const loadRegistrars = (state: RootState) => state.registrar;
-
 export const registrarActions = registorSlice.actions;
 
 export const registrarReducer = registorSlice.reducer;
+
+export const loadRegistrars = (state: RootState) => state.registrar;

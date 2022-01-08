@@ -35,6 +35,8 @@ const registrySlice = createSlice({
   initialState,
   reducers: {
     setRegistries: (state, action: PayloadAction<DocState>) => {
+      console.log(action.payload);
+
       state.doc = action.payload;
     },
     setHistory: (state, action: PayloadAction<HistoryState>) => {

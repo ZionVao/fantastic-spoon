@@ -1,6 +1,6 @@
 import { CssBaseline, GlobalStyles } from '@mui/material';
 import React from 'react';
-import RegistryTable from 'src/components/registry/RegistryTable';
+import { RegistrarTable } from 'src/components/registrar/RegistrarTable';
 
 export const AdminHome = () => {
   return (
@@ -9,7 +9,7 @@ export const AdminHome = () => {
         styles={{ ul: { margin: 0, padding: 0, listStyle: 'none' } }}
       />
       <CssBaseline />
-      <RegistryTable />
+      <RegistrarTable />
     </React.Fragment>
   );
 };

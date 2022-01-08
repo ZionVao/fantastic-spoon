@@ -45,6 +45,14 @@ export function Header(params: {
             {'Спадковий реєстр'}
           </Typography>
           <nav>
+            <Link
+              variant="button"
+              color="text.primary"
+              href={AppRoute.ROOT}
+              sx={{ my: 1, mx: 1.5 }}
+            >
+              Головна
+            </Link>
             {params.role === UserRole.REGISTRATOR && (
               <Link
                 variant="button"
@@ -66,14 +74,14 @@ export function Header(params: {
               </Link>
             )}
 
-            <Link
+            {/* <Link
               variant="button"
               color="text.primary"
               href="#"
               sx={{ my: 1, mx: 1.5 }}
             >
               Support
-            </Link>
+            </Link> */}
           </nav>
           <Button onClick={exit} variant="outlined" sx={{ my: 1, mx: 1.5 }}>
             Вихід

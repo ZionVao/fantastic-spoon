@@ -35,7 +35,7 @@ export class UserService {
     return http.get<
       { page?: number; per_page?: number },
       { entities: User[]; count: number }
-    >(`/${args.role}${args.created_by && `/${args.created_by}/created`}`, {
+    >(`/${args.role}${args.created_by ? `/${args.created_by}/created` : ''}`, {
       headers: {
         authorization: `Bearer ${localStorage.getItem(StorageKey.TOKEN)}`,
         'Content-Type': 'multipart/form-data; charset=utf-8',
@@ -64,12 +64,10 @@ export class UserService {
   }
 
   static async createUser(args: createUserArgs) {
-    let req;
+    const req: Record<string, any> = { pass: args.pass };
 
-    if (args.role === UserRole.ADMIN)
-      req = { pass: args.pass, [UserRole.ADMIN]: args.user };
-    else if (args.role === UserRole.REGISTRATOR)
-      req = { pass: args.pass, [UserRole.REGISTRATOR]: args.user };
+    if (args.role === UserRole.ADMIN || args.role === UserRole.REGISTRATOR)
+      req[args.role] = args.user;
     else throw new Error('Неправильна роль');
 
     type r = typeof req;

@@ -6,4 +6,5 @@ export enum AppRoute {
   PROFILE = '/profile',
   CREATE = '/create',
   UPDATE_REGISTRY = '/registry/:id',
+  UPDATE_REGISTRATOR = '/registrator/:id',
 }

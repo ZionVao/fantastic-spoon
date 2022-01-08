@@ -67,6 +67,10 @@ function App() {
         {notice}
 
         <Switch>
+          {user.role === null && (
+            <Redirect exact from={AppRoute.ANY} to={AppRoute.LOGIN} />
+          )}
+
           {user.role === UserRole.REGISTRATOR && (
             <>
               <Route exact path={AppRoute.ROOT} component={RegistrarHome} />
@@ -89,10 +93,6 @@ function App() {
           )}
 
           <Route exact path={AppRoute.LOGIN} component={SignIn} />
-
-          {user.role === null && (
-            <Redirect exact from={AppRoute.ROOT} to={AppRoute.LOGIN} />
-          )}
 
           <Route path={AppRoute.ANY} component={NotFound} />
         </Switch>
