@@ -38,6 +38,7 @@ const initialPassportState: PassportData = {
   date_of_establishing: '',
   establisher_code: 0,
 };
+
 export const CreateRegistrar = () => {
   const dispatch = useTypedDispatch();
 

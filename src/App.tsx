@@ -20,11 +20,12 @@ import { selectNotification, uiActions } from 'src/store/ui/slice';
 import { getUser } from './store/user/slice';
 import { Alert, Snackbar } from '@mui/material';
 import { UserRole } from './common/enums/app/role.enum';
-import NotFound from './components/not-found/NotFound';
+import { NotFound } from './components/not-found/NotFound';
 import { CreateRegistry } from './components/registry/create/CreateRegistry';
 import { UpdateRegistry } from './components/registry/create/update/UpdateForm';
 import { logout } from './store/user/actions';
 import { CreateRegistrar } from './components/registrar/create/CreateRegistrar';
+import { UpdateRegigtrator } from './components/registrar/create/update/UpdateForm';
 
 function App() {
   const notification = useTypedSelector(selectNotification);
@@ -67,9 +68,8 @@ function App() {
         {notice}
 
         <Switch>
-          {user.role === null && (
-            <Redirect exact from={AppRoute.ANY} to={AppRoute.LOGIN} />
-          )}
+          <Route exact path={AppRoute.LOGIN} component={SignIn} />
+          <Route exact path={AppRoute.NOT_FOUND} component={NotFound} />
 
           {user.role === UserRole.REGISTRATOR && (
             <>
@@ -89,12 +89,23 @@ function App() {
             <>
               <Route exact path={AppRoute.ROOT} component={AdminHome} />
               <Route exact path={AppRoute.CREATE} component={CreateRegistrar} />
+              <Route
+                exact
+                path={AppRoute.UPDATE_REGISTRATOR}
+                render={({ match }) => (
+                  <UpdateRegigtrator id={Number(match.params.id)} />
+                )}
+              />
             </>
           )}
-
-          <Route exact path={AppRoute.LOGIN} component={SignIn} />
-
-          <Route path={AppRoute.ANY} component={NotFound} />
+          {user.role === null && (
+            <>
+              <Redirect exact from={AppRoute.ANY} to={AppRoute.LOGIN} />
+            </>
+          )}
+          <Route path={AppRoute.ANY}>
+            <Redirect to={AppRoute.NOT_FOUND} />
+          </Route>
         </Switch>
       </>
     </Router>

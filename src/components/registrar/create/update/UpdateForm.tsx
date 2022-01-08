@@ -9,77 +9,66 @@ import StepLabel from '@mui/material/StepLabel';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import PersonForm from '../PersonForm';
-import DocForm from '../DocForm';
-import Review from '../Review';
-import { DocData, PersonData } from '../Data';
-import { StorageKey } from 'src/common/enums/storage-key.enum';
+
+import { Review } from '../Review';
+import { RegistrarData, PassportData } from '../Data';
 import { useTypedDispatch } from 'src/store';
-import { getRegistryById, updateRegistry } from 'src/store/registry/actions';
-import { DocRecord } from 'src/interfaces/services/models/Record';
-import { Person } from 'src/interfaces/services/models/Person';
+import {
+  getRegistratorById,
+  updateRegistrator,
+} from 'src/store/registrator/actions';
+import { UserForm } from '../UserForm';
+import { PassportForm } from '../PassportForm';
 import dayjs from 'dayjs';
 
 const steps = [
-  'Відомості про Заповідача / Відчужувача',
-  'Відомості про документ',
-  'Створення',
+  'Відомості про Реєстратора',
+  'Паспортні відомості',
+  'Редагування',
 ];
 
 const theme = createTheme();
 
-const initialPesonState: Person = {
-  taxpayer_code: '',
+const initialUserState: RegistrarData = {
   fullname: '',
-  place_of_living: {
-    country: '',
-    line_1: '',
-    line_2: '',
-  },
-  place_of_birth: {
-    country: '',
-    line_1: '',
-    line_2: '',
-  },
+  email: '',
   date_of_birth: '',
-};
-type DocumentData = DocData & { id: number };
-const initialDocState: DocumentData = {
-  id: 0,
-  type: 0,
-  blanks_numbers: 0,
-  notarial_action_id: 1,
-  sertificated_by:
-    JSON.parse(localStorage.getItem(StorageKey.USER) || 'null')?.userId || 1,
-  sertificating_date: '',
-  sertificating_place: {
-    country: '',
-    line_1: '',
-    line_2: '',
-  },
+  organization: '',
+  position: '',
+  taxpayer_code: '',
+  pass: '',
 };
 
-export function UpdateRegistry(props: { id: number }) {
+const initialPassportState: PassportData = {
+  code: '',
+  series: '',
+  date_of_establishing: '',
+  establisher_code: 0,
+};
+
+export const UpdateRegigtrator = (props: { id: number }) => {
   const dispatch = useTypedDispatch();
 
   const [activeStep, setActiveStep] = React.useState(0);
 
-  const [person, setPersonData] = React.useState<PersonData>(initialPesonState);
-  const [doc, setDocData] = React.useState<DocData>(initialDocState);
+  const [user, setUserData] = React.useState<RegistrarData>(initialUserState);
+  const [passport, setPassportData] =
+    React.useState<PassportData>(initialPassportState);
 
   React.useEffect(() => {
     async function fetchData() {
-      const res = await dispatch(getRegistryById(props.id));
+      const res = await dispatch(getRegistratorById(props.id));
       console.log(res, 'dispatch');
 
       if (res) {
-        setPersonData({
-          ...res.person,
-          date_of_birth: dayjs(res.person.date_of_birth).format('YYYY-MM-DD'),
-        });
-        setDocData({
+        setUserData({
+          pass: '',
           ...res,
-          sertificating_date: dayjs(res.sertificating_date).format(
+          date_of_birth: dayjs(res.date_of_birth).format('YYYY-MM-DD'),
+        });
+        setPassportData({
+          ...res.passport,
+          date_of_establishing: dayjs(res.passport.date_of_establishing).format(
             'YYYY-MM-DD',
           ),
         });
@@ -96,34 +85,38 @@ export function UpdateRegistry(props: { id: number }) {
     setActiveStep(activeStep - 1);
   };
 
-  const handlePerson = React.useCallback(
-    (personData: PersonData) => setPersonData(personData),
+  const handleUser = React.useCallback(
+    (regisrarData: RegistrarData) => setUserData(regisrarData),
     [],
   );
 
-  const handleDoc = React.useCallback(
-    (docDate: DocData) => setDocData(docDate),
+  const handlePassport = React.useCallback(
+    (passportData: PassportData) => setPassportData(passportData),
     [],
   );
 
   const handleUpdate = React.useCallback(
     () =>
       dispatch(
-        updateRegistry({
-          ...doc,
-          sertificating_place: { ...doc.sertificating_place },
-          person: { ...person },
-        }),
+        updateRegistrator(
+          {
+            ...user,
+            passport,
+          },
+          user.pass,
+        ),
       ),
-    [dispatch, doc, person],
+    [dispatch, passport, user],
   );
 
   const getStepContent = (step: number) => {
     switch (step) {
       case 0:
-        return <PersonForm onChange={handlePerson} personData={person} />;
+        return <UserForm onChange={handleUser} registrarData={user} />;
       case 1:
-        return <DocForm onChange={handleDoc} docData={doc} />;
+        return (
+          <PassportForm onChange={handlePassport} passportData={passport} />
+        );
       case 2:
         return <Review />;
       default:
@@ -141,7 +134,7 @@ export function UpdateRegistry(props: { id: number }) {
           sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}
         >
           <Typography component="h1" variant="h4" align="center">
-            Редагування документа
+            Редагування Реєстратора
           </Typography>
           <Stepper activeStep={activeStep} sx={{ pt: 3, pb: 5 }}>
             {steps.map((label) => (
@@ -158,7 +151,7 @@ export function UpdateRegistry(props: { id: number }) {
                 </Typography>
                 <Typography variant="subtitle1">
                   Очікуйте сповіщення про статус виконання операції редагування
-                  відомостей про документ.
+                  відомостей про Реєстратора.
                 </Typography>
                 <Button variant="outlined" onClick={handleUpdate}>
                   Редагувати
@@ -178,9 +171,7 @@ export function UpdateRegistry(props: { id: number }) {
                     onClick={handleNext}
                     sx={{ mt: 3, ml: 1 }}
                   >
-                    {activeStep === steps.length - 1
-                      ? 'Редагувати документ'
-                      : 'Далі'}
+                    {activeStep === steps.length - 1 ? 'Редагувати' : 'Далі'}
                   </Button>
                 </Box>
               </React.Fragment>
@@ -190,4 +181,4 @@ export function UpdateRegistry(props: { id: number }) {
       </Container>
     </ThemeProvider>
   );
-}
+};

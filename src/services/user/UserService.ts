@@ -82,12 +82,14 @@ export class UserService {
   }
 
   static async updateUser(args: updateUserArgs) {
+    const req: Record<string, any> = { pass: args.pass };
     if (args.role === UserRole.ROOT) throw new Error('Неправильна роль');
-    return http.put<{ record: User; pass?: string }, number>(
+    req[args.role] = args.user;
+    type t = typeof req;
+    return http.put<t, number>(
       `/${args.role}`,
       {
-        record: args.user,
-        pass: args.pass,
+        ...req,
       },
       {
         headers: {

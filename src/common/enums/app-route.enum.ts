@@ -7,4 +7,5 @@ export enum AppRoute {
   CREATE = '/create',
   UPDATE_REGISTRY = '/registry/:id',
   UPDATE_REGISTRATOR = '/registrator/:id',
+  NOT_FOUND = '/404',
 }

@@ -47,14 +47,59 @@ export const createNewRegistrar =
           }),
         ),
       )
-      .catch((error: Error) => {
+      .catch((error) => {
         console.log(error);
 
         dispatch(
           uiActions.showNotification({
             status: 'error',
             title: 'Error!',
-            message: `Виникла помилка при додаванні! \n${error.message}`,
+            message: `Виникла помилка при додаванні!`,
+          }),
+        );
+      });
+
+export const getRegistratorById =
+  (id: number) =>
+  async (dispatch: Dispatch): Promise<User | undefined> => {
+    try {
+      const res = await UserService.getUserById({
+        id,
+        role: UserRole.REGISTRATOR,
+      });
+      return res;
+    } catch (error) {
+      console.log(error);
+      dispatch(
+        uiActions.showNotification({
+          status: 'error',
+          title: 'Error!',
+          message: 'Помилка читання запису!',
+        }),
+      );
+    }
+  };
+
+export const updateRegistrator =
+  (record: User, pass?: string) => (dispatch: Dispatch) =>
+    UserService.updateUser({ role: UserRole.REGISTRATOR, user: record, pass })
+      .then((data) =>
+        dispatch(
+          uiActions.showNotification({
+            status: 'success',
+            title: 'Success!',
+            message: 'Дані про Реєстратора було змінено!',
+          }),
+        ),
+      )
+      .catch((error) => {
+        console.log(error);
+
+        dispatch(
+          uiActions.showNotification({
+            status: 'error',
+            title: 'Error!',
+            message: 'Виникла помилка при внесені змін!',
           }),
         );
       });
