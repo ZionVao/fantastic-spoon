@@ -1,5 +1,5 @@
 import { Dispatch } from '@reduxjs/toolkit';
-import { RegistryFilter, RegistryHistoryFilter } from 'src/interfaces/Filters';
+import { RegistryFilter } from 'src/interfaces/Filters';
 import { HistoryRec } from 'src/interfaces/services/models/HistoryRec';
 import { DocRecord } from 'src/interfaces/services/models/Record';
 import { RegistryService } from 'src/services/registry/RegistryService';
@@ -19,32 +19,6 @@ export const fetchRegistryData =
             totalCount: data.count,
           }),
         ),
-      )
-      .catch((error) => {
-        dispatch(
-          uiActions.showNotification({
-            status: 'error',
-            title: 'Error!',
-            message: `Помилка! ${error.data.error}`,
-          }),
-        );
-      });
-
-export const fetchRegistryHistoryData =
-  (filter: RegistryHistoryFilter) => (dispatch: Dispatch) =>
-    RegistryService.getRecordHistory(filter)
-      .then(
-        (data) => {},
-        // dispatch(
-        //   registryActions.setHistory({
-        //     docId: filter.doc_id,
-        //     history: data.entities,
-        //     page: filter.page,
-        //     count: filter.per_page,
-        //     totalCount: data.count,
-        //     totalPages: Math.ceil(data.count / filter.per_page),
-        //   }),
-        // ),
       )
       .catch((error) => {
         dispatch(

@@ -16,7 +16,6 @@ import { DocData, PersonData } from '../Data';
 import { StorageKey } from 'src/common/enums/storage-key.enum';
 import { useTypedDispatch } from 'src/store';
 import { getRegistryById, updateRegistry } from 'src/store/registry/actions';
-import { DocRecord } from 'src/interfaces/services/models/Record';
 import { Person } from 'src/interfaces/services/models/Person';
 import dayjs from 'dayjs';
 

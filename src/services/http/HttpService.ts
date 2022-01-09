@@ -1,5 +1,4 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
-import { StorageKey } from 'src/common/enums/storage-key.enum';
 
 enum StatusCode {
   Unauthorized = 401,
@@ -12,22 +11,6 @@ enum StatusCode {
 const headers: Readonly<Record<string, string>> = {
   Accept: '*/*',
   'Content-Type': 'application/json; charset=utf-8',
-  // 'Access-Control-Allow-Credentials': true,
-  // 'X-Requested-With': 'XMLHttpRequest',
-};
-
-const injectToken = (config: AxiosRequestConfig): AxiosRequestConfig => {
-  try {
-    const token = localStorage.getItem(StorageKey.TOKEN);
-
-    if (token !== null && config.headers) {
-      config.headers.Authorization = `Bearer ${token}`;
-      config.headers = { ...config.headers };
-    }
-    return config;
-  } catch (error: any) {
-    throw new Error(error);
-  }
 };
 
 class Http {

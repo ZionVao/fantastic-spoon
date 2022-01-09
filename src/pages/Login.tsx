@@ -3,9 +3,7 @@ import { useHistory } from 'react-router-dom';
 import {
   Avatar,
   Button,
-  CssBaseline,
   TextField,
-  Link,
   Paper,
   Box,
   Grid,
@@ -40,9 +38,7 @@ export default function SignIn() {
   };
 
   return (
-    // <ThemeProvider theme={theme}>
     <Grid container component="main" sx={{ height: '100vh' }}>
-      {/* //     <CssBaseline /> */}
       <Grid
         item
         xs={false}
@@ -99,7 +95,6 @@ export default function SignIn() {
               id="email"
               label="Електронна адреса"
               name="email"
-              // autoComplete="email"
               autoFocus
               value={email}
               onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
@@ -133,6 +128,5 @@ export default function SignIn() {
         </Box>
       </Grid>
     </Grid>
-    // </ThemeProvider>
   );
 }

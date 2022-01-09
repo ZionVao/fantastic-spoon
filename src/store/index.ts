@@ -6,11 +6,8 @@ import { registryReducer } from 'src/store/registry/slice';
 import { registrarReducer } from 'src/store/registrator/slice';
 import { adminReducer } from 'src/store/admin/slice';
 
-// import { sessionReducer } from 'redux-react-session';
-
 export const store = configureStore({
   reducer: {
-    // session: sessionReducer,
     ui: uiReducer,
     user: userReduser,
     registry: registryReducer,

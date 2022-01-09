@@ -1,4 +1,3 @@
-// import { Role } from "src/common/enums/app/role.enum";
 import { User } from 'src/interfaces/services/models/User';
 import { UserRole } from 'src/common/enums/app/role.enum';
 import { http } from 'src/services/http/HttpService';

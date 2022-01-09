@@ -21,33 +21,9 @@ import { HistoryRec } from 'src/interfaces/services/models/HistoryRec';
 import { getHistoryByRegistryId } from 'src/store/registry/actions';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
-interface Data {
-  type: string;
-  blanks_numbers: string;
-  sertificating_date: string;
-  sertificating_place: string;
-  taxpayer_code: string;
-
-  fullname: string;
-  place_of_living: string;
-  place_of_birth: string;
-  date_of_birth: string;
-}
-
 const CreateData = (props: { doc: HistoryRec }) => {
   const { edit } = props.doc;
-  const rec: Record<string, string> = {};
-  if (edit.type)
-    rec['type'] = Object.values(DocType)[edit.type] || DocType.WILL;
-  if (edit.blanks_numbers)
-    rec['blanks_numbers'] = edit.blanks_numbers.toString();
-  if (edit.sertificating_date)
-    rec['sertificating_date'] = dayjs(edit.sertificating_date).format(
-      'YYYY-MM-DD',
-    );
-  if (edit.sertificating_place) {
-    const { country, line_1, line_2 } = edit.sertificating_place;
-  }
+
   return (
     <>
       {edit.person && (
@@ -99,11 +75,13 @@ const CreateData = (props: { doc: HistoryRec }) => {
         </Grid>
       )}
       <Grid container spacing={3}>
-        <Grid item xs={12}>
-          <Typography variant="h6" gutterBottom align="center">
-            Зміни в заповіті
-          </Typography>
-        </Grid>
+        {
+          <Grid item xs={12}>
+            <Typography variant="h6" gutterBottom align="center">
+              Зміни в заповіті
+            </Typography>
+          </Grid>
+        }
         <Grid item xs={12} sm={6}>
           {edit.type && (
             <Typography>{`Тип документа: ${
@@ -121,7 +99,7 @@ const CreateData = (props: { doc: HistoryRec }) => {
         </Grid>
         {edit.sertificating_place && (
           <Grid item xs={12} sm={6}>
-            <Typography variant="h6">Місце реєстрації</Typography>
+            <Typography align="center">Місце реєстрації</Typography>
             <Typography>{`Країна: ${
               edit.sertificating_place.country || 'Без змін'
             }`}</Typography>
@@ -146,20 +124,24 @@ const Row = (props: { row: HistoryRec }) => {
   };
 
   return (
-    <Accordion expanded={expanded} onChange={handleChange}>
+    <Accordion
+      expanded={expanded}
+      onChange={handleChange}
+      sx={{
+        width: 'auto',
+      }}
+    >
       <AccordionSummary
         expandIcon={<ExpandMoreIcon />}
         aria-controls="panel1bh-content"
         id="panel1bh-header"
       >
-        <TableRow hover role="checkbox" tabIndex={-1} key={props.row.time}>
-          <TableCell>{`${new Date(props.row.time)
-            .toISOString()
-            .substring(0, 10)} ${new Date(props.row.time)
-            .toISOString()
-            .substring(11, 19)}`}</TableCell>
-          <TableCell align="right">{props.row.user.name}</TableCell>
-        </TableRow>
+        <TableCell>{`${new Date(props.row.time)
+          .toISOString()
+          .substring(0, 10)} ${new Date(props.row.time)
+          .toISOString()
+          .substring(11, 19)}`}</TableCell>
+        <TableCell align="right">{props.row.user.name}</TableCell>
       </AccordionSummary>
       <AccordionDetails>
         <CreateData doc={props.row} />
@@ -202,7 +184,7 @@ export const History = (props: { registryId: number }) => {
           <TableHead>
             <TableRow>
               <TableCell> {'Дата та час'}</TableCell>
-              <TableCell align="right">{'Реєстратор'}</TableCell>
+              <TableCell align="left">{'Реєстратор'}</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>

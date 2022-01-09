@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Grid, Box, Stack, TextField, Button } from '@mui/material';
+import { Grid, Box, Stack, Button } from '@mui/material';
 import { UserFilter } from 'src/interfaces/Filters';
 
 export const PaginationSearch = (props: {

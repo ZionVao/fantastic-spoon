@@ -25,7 +25,6 @@ import { fetchRegistryData } from 'src/store/registry/actions';
 import { loadRegistry } from 'src/store/registry/slice';
 import { DocType } from 'src/common/enums/app/doc-type.enum';
 import { DocRecord } from 'src/interfaces/services/models/Record';
-import { AppRoute } from 'src/common/enums/app-route.enum';
 import { UserRole } from 'src/common/enums/app/role.enum';
 import { StorageKey } from 'src/common/enums/storage-key.enum';
 import { History } from './History';
