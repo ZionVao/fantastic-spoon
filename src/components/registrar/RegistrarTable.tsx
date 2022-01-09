@@ -173,7 +173,7 @@ export const RegistrarTable = () => {
   return (
     <Paper sx={{ width: '100%' }}>
       <PaginationSearch onSearch={handleSearch} />
-      <TableContainer sx={{ maxHeight: '90%' }}>
+      <TableContainer sx={{ minHeight: 440 }}>
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
             <TableRow>
