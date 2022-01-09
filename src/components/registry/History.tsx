@@ -1,34 +1,25 @@
 import * as React from 'react';
 import {
-  Box,
-  Button,
-  Collapse,
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
   Grid,
-  IconButton,
-  Pagination,
   Paper,
   Table,
   TableBody,
   TableCell,
   TableContainer,
-  TableFooter,
   TableHead,
   TablePagination,
   TableRow,
   Typography,
 } from '@mui/material';
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import dayjs from 'dayjs';
-import { useTypedDispatch, useTypedSelector } from 'src/store';
+import { useTypedDispatch } from 'src/store';
 import { DocType } from 'src/common/enums/app/doc-type.enum';
-import { DocRecord } from 'src/interfaces/services/models/Record';
 import { HistoryRec } from 'src/interfaces/services/models/HistoryRec';
-import FirstPageIcon from '@mui/icons-material/FirstPage';
-import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
-import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
-import LastPageIcon from '@mui/icons-material/LastPage';
 import { getHistoryByRegistryId } from 'src/store/registry/actions';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 interface Data {
   type: string;
@@ -43,8 +34,8 @@ interface Data {
   date_of_birth: string;
 }
 
-const createData = (doc: HistoryRec) => {
-  const { edit } = doc;
+const CreateData = (props: { doc: HistoryRec }) => {
+  const { edit } = props.doc;
   const rec: Record<string, string> = {};
   if (edit.type)
     rec['type'] = Object.values(DocType)[edit.type] || DocType.WILL;
@@ -58,14 +49,122 @@ const createData = (doc: HistoryRec) => {
     const { country, line_1, line_2 } = edit.sertificating_place;
   }
   return (
-    <React.Fragment>
-      <Typography variant="h6" gutterBottom>
-        Персональні дані
-      </Typography>
+    <>
+      {edit.person && (
+        <Grid container spacing={3}>
+          <Grid item xs={12}>
+            <Typography variant="h6" gutterBottom align="center">
+              Зміни в персональних даних
+            </Typography>
+            {edit.person.fullname && (
+              <Typography>{`ПІБ: ${edit.person.fullname}`}</Typography>
+            )}
+            {edit.person.taxpayer_code && (
+              <Typography>{`Ідентифікаційний код: ${edit.person.taxpayer_code}`}</Typography>
+            )}
+            {edit.person.date_of_birth && (
+              <Typography>{`Дата народження: ${dayjs(
+                edit.sertificating_date,
+              ).format('YYYY-MM-DD')}`}</Typography>
+            )}
+          </Grid>
+          {edit.person.place_of_living && (
+            <Grid item xs={12} sm={6}>
+              <Typography variant="h6">Місце проживання</Typography>
+              <Typography>{`Країна: ${
+                edit.person.place_of_living.country || 'Без змін'
+              }`}</Typography>
+              <Typography>{`Адресний рядок 1: ${
+                edit.person.place_of_living.line_1 || 'Без змін'
+              }`}</Typography>
+              <Typography>{` Адресний рядок 2: ${
+                edit.person.place_of_living.line_2 || 'Без змін'
+              }`}</Typography>
+            </Grid>
+          )}
+          {edit.person.place_of_birth && (
+            <Grid item xs={12} sm={6}>
+              <Typography variant="h6">Місце народження</Typography>
+              <Typography>{`Країна: ${
+                edit.person.place_of_birth.country || 'Без змін'
+              }`}</Typography>
+              <Typography>{`Адресний рядок 1: ${
+                edit.person.place_of_birth.line_1 || 'Без змін'
+              }`}</Typography>
+              <Typography>{` Адресний рядок 2: ${
+                edit.person.place_of_birth.line_2 || 'Без змін'
+              }`}</Typography>
+            </Grid>
+          )}
+        </Grid>
+      )}
       <Grid container spacing={3}>
-        <Grid item xs={12}></Grid>
+        <Grid item xs={12}>
+          <Typography variant="h6" gutterBottom align="center">
+            Зміни в заповіті
+          </Typography>
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          {edit.type && (
+            <Typography>{`Тип документа: ${
+              Object.values(DocType)[edit.type] || DocType.WILL
+            }`}</Typography>
+          )}
+          {edit.blanks_numbers && (
+            <Typography>{`Номер бланку: ${edit.blanks_numbers.toString()}`}</Typography>
+          )}
+          {edit.sertificating_date && (
+            <Typography>{`Дата реєстрації: ${dayjs(
+              edit.sertificating_date,
+            ).format('YYYY-MM-DD')}`}</Typography>
+          )}
+        </Grid>
+        {edit.sertificating_place && (
+          <Grid item xs={12} sm={6}>
+            <Typography variant="h6">Місце реєстрації</Typography>
+            <Typography>{`Країна: ${
+              edit.sertificating_place.country || 'Без змін'
+            }`}</Typography>
+            <Typography>{`Адресний рядок 1: ${
+              edit.sertificating_place.line_1 || 'Без змін'
+            }`}</Typography>
+            <Typography>{` Адресний рядок 2: ${
+              edit.sertificating_place.line_2 || 'Без змін'
+            }`}</Typography>
+          </Grid>
+        )}
       </Grid>
-    </React.Fragment>
+    </>
+  );
+};
+
+const Row = (props: { row: HistoryRec }) => {
+  const [expanded, setExpanded] = React.useState<boolean>(false);
+
+  const handleChange = () => {
+    setExpanded(!expanded);
+  };
+
+  return (
+    <Accordion expanded={expanded} onChange={handleChange}>
+      <AccordionSummary
+        expandIcon={<ExpandMoreIcon />}
+        aria-controls="panel1bh-content"
+        id="panel1bh-header"
+      >
+        <TableRow hover role="checkbox" tabIndex={-1} key={props.row.time}>
+          <TableCell>{`${new Date(props.row.time)
+            .toISOString()
+            .substring(0, 10)} ${new Date(props.row.time)
+            .toISOString()
+            .substring(11, 19)}`}</TableCell>
+          <TableCell align="right">{props.row.user.name}</TableCell>
+        </TableRow>
+      </AccordionSummary>
+      <AccordionDetails>
+        <CreateData doc={props.row} />
+      </AccordionDetails>
+    </Accordion>
   );
 };
 
@@ -110,22 +209,13 @@ export const History = (props: { registryId: number }) => {
             {rows
               .slice(page * rowsPerPage, (page + 1) * rowsPerPage)
               .map((row) => {
-                return (
-                  <TableRow hover role="checkbox" tabIndex={-1} key={row.time}>
-                    <TableCell>{`${new Date(row.time)
-                      .toISOString()
-                      .substring(0, 10)} ${new Date(row.time)
-                      .toISOString()
-                      .substring(11, 19)}`}</TableCell>
-                    <TableCell align="right">{row.user.name}</TableCell>
-                  </TableRow>
-                );
+                return <Row row={row} />;
               })}
           </TableBody>
         </Table>
       </TableContainer>
       <TablePagination
-        rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
+        rowsPerPageOptions={[5, 10, 25]}
         colSpan={3}
         SelectProps={{
           inputProps: {
