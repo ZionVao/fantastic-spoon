@@ -22,7 +22,11 @@ import { User } from 'src/interfaces/services/models/User';
 import { useTypedDispatch, useTypedSelector } from 'src/store';
 import { loadRegistrars } from 'src/store/registrator/slice';
 import { UserFilter } from 'src/interfaces/Filters';
-import { fetchRegistrarsData } from 'src/store/registrator/actions';
+import {
+  fetchRegistrarsData,
+  setStatusById,
+  updateRegistrator,
+} from 'src/store/registrator/actions';
 import { PaginationSearch } from './PaginationSearch';
 
 interface Column {
@@ -49,10 +53,14 @@ const columns: Column[] = [
   },
 ];
 
-const Row = (props: { row: User }) => {
+const Row = (props: {
+  row: User;
+  onSetEnable: (user: User, status: boolean) => void;
+}) => {
   const { row } = props;
   const [open, setOpen] = React.useState(false);
   console.log(props.row);
+  const dispatch = useTypedDispatch();
 
   return (
     <React.Fragment>
@@ -116,6 +124,15 @@ const Row = (props: { row: User }) => {
                       >
                         Внести зміни
                       </Button>
+                      <Button
+                        onClick={() => {
+                          props.onSetEnable(props.row, !props.row.is_enable);
+                        }}
+                        variant="outlined"
+                        sx={{ my: 1, mx: 1.5 }}
+                      >
+                        {row.is_enable ? 'Деактивувати' : 'Активувати'}
+                      </Button>
                     </TableCell>
                   </TableRow>
                 </TableBody>
@@ -148,6 +165,13 @@ export const RegistrarTable = () => {
     [dispatch, page],
   );
 
+  const handleSetStatus = React.useCallback(
+    (user: User, status: boolean) => {
+      dispatch(setStatusById(user, status));
+    },
+    [dispatch],
+  );
+
   return (
     <Paper sx={{ width: '100%' }}>
       <PaginationSearch onSearch={handleSearch} />
@@ -169,7 +193,7 @@ export const RegistrarTable = () => {
           </TableHead>
           <TableBody>
             {registrar.registrars.map((row) => (
-              <Row key={row.id} row={row} />
+              <Row key={row.id} row={row} onSetEnable={handleSetStatus} />
             ))}
           </TableBody>
         </Table>

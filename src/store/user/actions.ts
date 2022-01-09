@@ -27,14 +27,14 @@ export const login =
           message: `Користувач увійшов`,
         }),
       );
-    } catch (error) {
+    } catch (error: any) {
       console.log(error);
 
       dispatch(
         uiActions.showNotification({
           status: 'error',
           title: 'Error!',
-          message: 'Failed Login!',
+          message: `Помилка! ${error.data.error}`,
         }),
       );
     }

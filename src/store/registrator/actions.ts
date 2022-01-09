@@ -26,7 +26,7 @@ export const fetchRegistrarsData =
           uiActions.showNotification({
             status: 'error',
             title: 'Error!',
-            message: 'Помилка',
+            message: `Помилка! ${error.data.error}`,
           }),
         );
       });
@@ -54,7 +54,7 @@ export const createNewRegistrar =
           uiActions.showNotification({
             status: 'error',
             title: 'Error!',
-            message: `Виникла помилка при додаванні!`,
+            message: `Помилка! ${error.data.error || error.data.message}`,
           }),
         );
       });
@@ -68,13 +68,13 @@ export const getRegistratorById =
         role: UserRole.REGISTRATOR,
       });
       return res;
-    } catch (error) {
+    } catch (error: any) {
       console.log(error);
       dispatch(
         uiActions.showNotification({
           status: 'error',
           title: 'Error!',
-          message: 'Помилка читання запису!',
+          message: `Помилка! ${error.data.error}`,
         }),
       );
     }
@@ -103,3 +103,14 @@ export const updateRegistrator =
           }),
         );
       });
+
+export const setStatusById =
+  (record: User, status: boolean) => (dispatch: Dispatch) =>
+    UserService.updateUser({
+      role: UserRole.REGISTRATOR,
+      user: { ...record, is_enable: status },
+    }).then((data) =>
+      dispatch(
+        registrarActions.setStatusById({ id: record.id as number, status }),
+      ),
+    );

@@ -9,4 +9,5 @@ export interface User {
   organization: string;
   position: string;
   taxpayer_code: string;
+  is_enable?: boolean;
 }

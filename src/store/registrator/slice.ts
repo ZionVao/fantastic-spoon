@@ -32,6 +32,16 @@ const registorSlice = createSlice({
       state.totalCount = action.payload.totalCount;
       console.log('qwerty', state);
     },
+    setStatusById: (
+      state,
+      action: PayloadAction<{ id: number; status: boolean }>,
+    ) => {
+      state.registrars = state.registrars.map((user) =>
+        user.id === action.payload.id
+          ? { ...user, is_enable: action.payload.status }
+          : user,
+      );
+    },
   },
 });
 

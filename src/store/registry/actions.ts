@@ -19,12 +19,12 @@ export const fetchRegistryData =
           }),
         ),
       )
-      .catch(() => {
+      .catch((error) => {
         dispatch(
           uiActions.showNotification({
             status: 'error',
             title: 'Error!',
-            message: 'Помилка',
+            message: `Помилка! ${error.data.error}`,
           }),
         );
       });
@@ -44,12 +44,12 @@ export const fetchRegistryHistoryData =
           }),
         ),
       )
-      .catch(() => {
+      .catch((error) => {
         dispatch(
           uiActions.showNotification({
             status: 'error',
             title: 'Error!',
-            message: 'Помилка',
+            message: `Помилка! ${error.data.error}`,
           }),
         );
       });
@@ -72,7 +72,7 @@ export const createNewRegistry = (record: DocRecord) => (dispatch: Dispatch) =>
         uiActions.showNotification({
           status: 'error',
           title: 'Error!',
-          message: 'Виникла помилка при додаванні!',
+          message: `Помилка! ${error.data.error}`,
         }),
       );
     });
@@ -95,7 +95,7 @@ export const updateRegistry = (record: DocRecord) => (dispatch: Dispatch) =>
         uiActions.showNotification({
           status: 'error',
           title: 'Error!',
-          message: 'Виникла помилка при внесені змін!',
+          message: `Помилка! ${error.data.error}`,
         }),
       );
     });
@@ -106,13 +106,13 @@ export const getRegistryById =
     try {
       const res = await RegistryService.getRegistryById(id);
       return res;
-    } catch (error) {
+    } catch (error: any) {
       console.log(error);
       dispatch(
         uiActions.showNotification({
           status: 'error',
           title: 'Error!',
-          message: 'Помилка читання запису!',
+          message: `Помилка! ${error.data.error}`,
         }),
       );
     }
