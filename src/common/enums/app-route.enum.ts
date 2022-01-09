@@ -3,7 +3,7 @@ export enum AppRoute {
   ANY = '*',
   LOGIN = '/login',
   REGISTRATION = '/registration',
-  PROFILE = '/profile',
+  REGISTRY = '/registry',
   CREATE = '/create',
   UPDATE_REGISTRY = '/registry/:id',
   UPDATE_REGISTRATOR = '/registrator/:id',

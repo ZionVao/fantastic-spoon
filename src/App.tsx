@@ -89,6 +89,7 @@ function App() {
             <>
               <Route exact path={AppRoute.ROOT} component={AdminHome} />
               <Route exact path={AppRoute.CREATE} component={CreateRegistrar} />
+              <Route exact path={AppRoute.REGISTRY} component={RegistrarHome} />
               <Route
                 exact
                 path={AppRoute.UPDATE_REGISTRATOR}

@@ -48,7 +48,7 @@ export class RegistryService {
       { entities: HistoryRec[]; count: number }
     >(
       `/registry/${filter.doc_id}/history${
-        filter.user_id && `/${filter.user_id}`
+        filter.user_id ? `/${filter.user_id}` : ''
       }`,
       {
         headers: {

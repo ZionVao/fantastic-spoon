@@ -12,8 +12,8 @@ export interface RegistryFilter {
 
 export interface RegistryHistoryFilter {
   doc_id: number;
-  page: number;
-  per_page: number;
+  page?: number;
+  per_page?: number;
   user_id?: number;
 }
 

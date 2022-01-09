@@ -26,6 +26,9 @@ import { loadRegistry } from 'src/store/registry/slice';
 import { DocType } from 'src/common/enums/app/doc-type.enum';
 import { DocRecord } from 'src/interfaces/services/models/Record';
 import { AppRoute } from 'src/common/enums/app-route.enum';
+import { UserRole } from 'src/common/enums/app/role.enum';
+import { StorageKey } from 'src/common/enums/storage-key.enum';
+import { History } from './History';
 
 interface Column {
   id: 'name' | 'code' | 'date' | 'type';
@@ -75,6 +78,10 @@ function Row(props: { row: DocRecord }) {
   const [open, setOpen] = React.useState(false);
 
   const rowData = createData(row);
+
+  const role: string = JSON.parse(
+    localStorage.getItem(StorageKey.USER) || '',
+  ).role;
 
   return (
     <React.Fragment>
@@ -128,19 +135,29 @@ function Row(props: { row: DocRecord }) {
                       {`${row.sertificating_place.line_1}, ${row.sertificating_place.line_2}, ${row.sertificating_place.country}`}
                     </TableCell>
                   </TableRow>
-                  <TableRow>
-                    <TableCell>
-                      <Button
-                        href={`/registry/${row.id}`}
-                        variant="outlined"
-                        sx={{ my: 1, mx: 1.5 }}
-                      >
-                        Внести зміни
-                      </Button>
-                    </TableCell>
-                  </TableRow>
+                  {role === UserRole.REGISTRATOR && (
+                    <TableRow>
+                      <TableCell>
+                        <Button
+                          href={`/registry/${row.id}`}
+                          variant="outlined"
+                          sx={{ my: 1, mx: 1.5 }}
+                        >
+                          Внести зміни
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  )}
                 </TableBody>
               </Table>
+              {role === UserRole.ADMIN && (
+                <>
+                  <Typography variant="h6" gutterBottom component="div">
+                    Історія
+                  </Typography>
+                  <History registryId={row.id as number} />
+                </>
+              )}
             </Box>
           </Collapse>
         </TableCell>

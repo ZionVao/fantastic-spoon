@@ -63,6 +63,7 @@ export function Header(params: {
                 Створити новий документ
               </Link>
             )}
+
             {params.role === UserRole.ADMIN && (
               <Link
                 variant="button"
@@ -71,6 +72,17 @@ export function Header(params: {
                 sx={{ my: 1, mx: 1.5 }}
               >
                 Створити нового реєстратора
+              </Link>
+            )}
+
+            {params.role === UserRole.ADMIN && (
+              <Link
+                variant="button"
+                color="text.primary"
+                href={AppRoute.REGISTRY}
+                sx={{ my: 1, mx: 1.5 }}
+              >
+                Відомості про документи
               </Link>
             )}
 

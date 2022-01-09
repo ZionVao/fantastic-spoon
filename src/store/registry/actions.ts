@@ -1,5 +1,6 @@
 import { Dispatch } from '@reduxjs/toolkit';
 import { RegistryFilter, RegistryHistoryFilter } from 'src/interfaces/Filters';
+import { HistoryRec } from 'src/interfaces/services/models/HistoryRec';
 import { DocRecord } from 'src/interfaces/services/models/Record';
 import { RegistryService } from 'src/services/registry/RegistryService';
 import { uiActions } from 'src/store/ui/slice';
@@ -32,17 +33,18 @@ export const fetchRegistryData =
 export const fetchRegistryHistoryData =
   (filter: RegistryHistoryFilter) => (dispatch: Dispatch) =>
     RegistryService.getRecordHistory(filter)
-      .then((data) =>
-        dispatch(
-          registryActions.setHistory({
-            docId: filter.doc_id,
-            history: data.entities,
-            page: filter.page,
-            count: filter.per_page,
-            totalCount: data.count,
-            totalPages: Math.ceil(data.count / filter.per_page),
-          }),
-        ),
+      .then(
+        (data) => {},
+        // dispatch(
+        //   registryActions.setHistory({
+        //     docId: filter.doc_id,
+        //     history: data.entities,
+        //     page: filter.page,
+        //     count: filter.per_page,
+        //     totalCount: data.count,
+        //     totalPages: Math.ceil(data.count / filter.per_page),
+        //   }),
+        // ),
       )
       .catch((error) => {
         dispatch(
@@ -106,6 +108,24 @@ export const getRegistryById =
     try {
       const res = await RegistryService.getRegistryById(id);
       return res;
+    } catch (error: any) {
+      console.log(error);
+      dispatch(
+        uiActions.showNotification({
+          status: 'error',
+          title: 'Error!',
+          message: `Помилка! ${error.data.error}`,
+        }),
+      );
+    }
+  };
+
+export const getHistoryByRegistryId =
+  (id: number) =>
+  async (dispatch: Dispatch): Promise<HistoryRec[] | undefined> => {
+    try {
+      const res = await RegistryService.getRecordHistory({ doc_id: id });
+      return res.entities;
     } catch (error: any) {
       console.log(error);
       dispatch(

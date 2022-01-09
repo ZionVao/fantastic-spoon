@@ -25,7 +25,6 @@ import { UserFilter } from 'src/interfaces/Filters';
 import {
   fetchRegistrarsData,
   setStatusById,
-  updateRegistrator,
 } from 'src/store/registrator/actions';
 import { PaginationSearch } from './PaginationSearch';
 
@@ -60,7 +59,6 @@ const Row = (props: {
   const { row } = props;
   const [open, setOpen] = React.useState(false);
   console.log(props.row);
-  const dispatch = useTypedDispatch();
 
   return (
     <React.Fragment>
@@ -175,7 +173,7 @@ export const RegistrarTable = () => {
   return (
     <Paper sx={{ width: '100%' }}>
       <PaginationSearch onSearch={handleSearch} />
-      <TableContainer sx={{ maxHeight: 440 }}>
+      <TableContainer sx={{ maxHeight: '90%' }}>
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
             <TableRow>
